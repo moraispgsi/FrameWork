@@ -1,0 +1,10 @@
+
+package %EVENT_DATA_PACKAGE;
+
+import Event.EventData;
+
+public class %EVENT_DATA_CLASS extends EventData {
+    
+    
+    
+}

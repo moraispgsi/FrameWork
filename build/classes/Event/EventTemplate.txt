@@ -1,0 +1,25 @@
+
+
+
+
+package %EVENT_PACKAGE;
+
+import Event.BaseEvent;
+import Event.EventData;
+import Event.EventType;
+
+
+public class %EVENT_CLASS<D extends EventData> extends BaseEvent<D> {
+
+    /*
+
+    //public static final EventType EVENT_TYPE = new EventType("EVENT_TYPE");
+
+    
+    public HealthEvent(EventType eventType, DATA_SUBCLASS data) {
+        super(eventType,(D)data);
+    }
+
+    */
+
+}
