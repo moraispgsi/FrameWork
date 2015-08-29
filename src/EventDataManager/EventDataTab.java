@@ -13,15 +13,23 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 
 
 public class EventDataTab extends Tab {
     
+    private final File eventDataIconFile = new File("src/Main/EventData.png");
+    private final Image eventDataIconImage = new Image(eventDataIconFile.toURI().toString());
+    
+    
     private final TextArea editor = new TextArea();
     private final String filePath;
+    private final String fileName;
 
     public EventDataTab(String filePath) {
         
@@ -31,8 +39,11 @@ public class EventDataTab extends Tab {
             this.filePath = filePath;
             
             File file = new File(filePath);
-            this.setText(file.getName());
             
+            fileName = file.getName();
+            setText(fileName);
+        
+            setGraphic(new ImageView(eventDataIconImage));
             
             String code = new Scanner(file).useDelimiter("\\Z").next();
             
@@ -43,7 +54,18 @@ public class EventDataTab extends Tab {
                     
                     save();
                     
+                    
+                    
+                }else{
+                    
+                    setText(fileName + "*");
+                    
+                    setStyle("-fx-font-weight: bold;");
+
+                    
                 }
+                    
+                    
             
             });
             
@@ -76,7 +98,8 @@ public class EventDataTab extends Tab {
                 Logger.getLogger(EventDataTab.class.getName()).log(Level.SEVERE, null, ex);
             }
             
-            
+            setText(fileName);
+            setStyle("");
             
         }        
         
