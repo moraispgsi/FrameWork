@@ -1,0 +1,36 @@
+package %PACKAGE_NAME;
+
+import Multifunctional.Functionality;
+import Multifunctional.Multifunctional;
+import Multifunctional.WrappedFunctionality;
+
+public class %CLASS_NAME implements Functionality {
+    
+    private final Functionality functionality = new WrappedFunctionality(this);
+
+    public %CLASS_NAME(){
+
+    }
+
+
+    @Override
+    public Multifunctional getMultifunctional() {
+        return functionality.getMultifunctional();
+    }
+
+    @Override
+    public boolean isConnected() {
+        return functionality.isConnected();
+    }
+
+    @Override
+    public void connect(Multifunctional multifunctional) {
+        functionality.connect(multifunctional);
+    }
+
+    @Override
+    public void disconnect() {
+        functionality.disconnect();
+    }
+
+}
