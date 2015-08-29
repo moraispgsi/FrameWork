@@ -5,11 +5,17 @@
  */
 package EventDataManager;
 
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.Scanner;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
+import javafx.scene.input.KeyCode;
 
 
 public class EventDataTab extends Tab {
@@ -30,6 +36,17 @@ public class EventDataTab extends Tab {
             
             String code = new Scanner(file).useDelimiter("\\Z").next();
             
+            
+            editor.setOnKeyPressed(e->{
+                
+                if(e.isControlDown() && e.getCode().equals(KeyCode.S)){
+                    
+                    save();
+                    
+                }
+            
+            });
+            
             editor.setText(code);
             
             editor.setPrefHeight(Integer.MAX_VALUE);
@@ -43,6 +60,26 @@ public class EventDataTab extends Tab {
         
     }
     
-    
+    public void save(){
+        
+        File file = new File(filePath);
+        
+        if(file.canWrite()){
+            
+
+            try(BufferedWriter br = new BufferedWriter(new FileWriter(file))) {
+                
+                br.write(editor.getText());
+                
+                
+            } catch (IOException ex) {
+                Logger.getLogger(EventDataTab.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+            
+            
+        }        
+        
+    }
     
 }
