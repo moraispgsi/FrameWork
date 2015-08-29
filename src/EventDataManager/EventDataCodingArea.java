@@ -13,9 +13,7 @@ import javafx.scene.control.TabPane;
 
 public class EventDataCodingArea extends TabPane {
 
-    
     private final Map<String,EventDataTab> pathToTab = new HashMap<>();
-    
     
     public EventDataCodingArea() {
         
