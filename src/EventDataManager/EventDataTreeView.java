@@ -47,7 +47,7 @@ public class EventDataTreeView extends TreeView {
     private final Map<TreeItem<Label>,String> filesMap = new HashMap<>();
     private final Map<TreeItem<Label>,String> dirMap = new HashMap<>();
     
-    private FileDoubleClick onFileDoubleClick;
+    private FileActionHandler onFileOpenRequest;
     
     private final IntegerProperty iconSize = new SimpleIntegerProperty(15);
     
@@ -63,19 +63,18 @@ public class EventDataTreeView extends TreeView {
             
             if(e.getClickCount() == 2){
                 TreeItem<Label> item = (TreeItem<Label>) getSelectionModel().getSelectedItem();
-
-                if(onFileDoubleClick!= null && filesMap.containsKey(item))
-                    onFileDoubleClick.handle(filesMap.get(item));
+ 
+                if(onFileOpenRequest!= null && filesMap.containsKey(item))
+                    onFileOpenRequest.handle(filesMap.get(item));
                 
             }
-            
-            
+
         });
 
     }
 
-    public void setOnFileDoubleClick(FileDoubleClick onFileDoubleClick) {
-        this.onFileDoubleClick = onFileDoubleClick;
+    public void setOnFileOpenRequest(FileActionHandler onFileOpenRequest) {
+        this.onFileOpenRequest = onFileOpenRequest;
     }
 
     public void setProjectPath(String projectPath) {
@@ -183,24 +182,27 @@ public class EventDataTreeView extends TreeView {
             throw new RuntimeException("Invalid file.");
         }
         
-        ContextMenu fileContextMenu = new ContextMenu();
-        fileContextMenu.setOnShowing(e->{
-
-        });
-        MenuItem deleteItem = new MenuItem("Delete");
-        deleteItem.setOnAction(e->{
-
-            //TODO: DELETE
-
-            update();
-
-        });
-        fileContextMenu.getItems().addAll(deleteItem);
-
+        FileContextMenu fileContextMenu = new FileContextMenu(file.getAbsolutePath());
+        
+ 
         Label nameLabel = new Label(file.getName());
         nameLabel.setContextMenu(fileContextMenu);
 
         TreeItem<Label> fileItem = new TreeItem<> (nameLabel,createIcon(eventDataIconImage)); 
+
+        fileContextMenu.setDeleteHandle(path->{
+        
+            dirItem.getChildren().remove(fileItem);
+        
+        });
+        
+        fileContextMenu.setOpenHandle(path->{
+            if(onFileOpenRequest!=null)
+                onFileOpenRequest.handle(path);
+            
+        });
+        
+        
         
         return fileItem;
 
