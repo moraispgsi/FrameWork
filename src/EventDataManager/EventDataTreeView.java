@@ -10,12 +10,13 @@ import java.io.FileNotFoundException;
 
 import java.io.FilenameFilter;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Scanner;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.scene.control.ContextMenu;
@@ -44,6 +45,7 @@ public class EventDataTreeView extends TreeView {
     
     private TreeItem<Label> rootItem;
     private final Map<TreeItem<Label>,String> filesMap = new HashMap<>();
+    private final Map<TreeItem<Label>,String> dirMap = new HashMap<>();
     
     private FileDoubleClick onFileDoubleClick;
     
@@ -82,14 +84,28 @@ public class EventDataTreeView extends TreeView {
             return;
         
         this.projectPath = projectPath;
+        update();
 
     }
     
     public void update(){
         
-        rootItem.setExpanded(true);
         filesMap.clear();
         
+        
+        Map<String,Boolean> expandedDirectories = new HashMap<>();
+        
+        for(TreeItem dir : rootItem.getChildren()){
+            
+            if(dirMap.containsKey(dir)){
+                expandedDirectories.put(dirMap.get(dir),dir.isExpanded());
+            }
+            
+        }
+
+        dirMap.clear();
+
+
         rootItem.getChildren().clear();
         
         File projectDir = new File(projectPath);
@@ -100,18 +116,29 @@ public class EventDataTreeView extends TreeView {
                 continue;
             }
             
-            FilenameFilter filter = (File directory, String fileName) -> fileName.endsWith(".java");
+            
+            
+            TreeItem<Label> packageItem = makePackageItem(dir);
+            
+            if(expandedDirectories.containsKey(dir.getAbsolutePath())){
+                packageItem.setExpanded(expandedDirectories.get(dir.getAbsolutePath()));  
+            }
+            
+            dirMap.put(packageItem, dir.getAbsolutePath());
             
 
-            TreeItem<Label> packageItem = makePackageItem(dir);
-
             rootItem.getChildren().add(packageItem);
+            
+            FilenameFilter filter = (File directory, String fileName) -> fileName.endsWith(".java");
 
             for(File file : dir.listFiles(filter)){
 
-                if(file.isDirectory()){
+                if(!file.exists() || 
+                        file.isDirectory()){
+                    
                     continue;
                 }
+                
                 try
                 {
                     String fileContent = new Scanner(file).useDelimiter("\\Z").next();
@@ -125,6 +152,9 @@ public class EventDataTreeView extends TreeView {
 
                     if(!match.group(1).equals("EventData"))
                         continue;
+                    
+                    
+                    //TODO: Package and file name test.
 
 
                 } catch (FileNotFoundException ex) {
@@ -142,7 +172,8 @@ public class EventDataTreeView extends TreeView {
             
 
         }
-        
+
+
     }
     
     
