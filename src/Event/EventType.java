@@ -6,17 +6,25 @@
 package Event;
 
 /**
- *
+ * Represents the type of an event
  * @author Ricardo José Horta Morais
  */
 public final class EventType {
 
     private final String type;
     
+    /**
+     * Contructor
+     * @param type type of the event 
+     */
     public EventType(String type) {
         this.type = type;
     }
 
+    /**
+     * Get event type
+     * @return event type
+     */
     public String getType(){
         return type;
     }

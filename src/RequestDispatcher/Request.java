@@ -9,13 +9,21 @@ package RequestDispatcher;
 
 
 /**
- *
+ * Request interface
  * @author Ricardo José Horta Morais
- * @param <D>
+ * @param <D> type of requestData
  */
 public interface Request <D extends RequestData> {
     
+    /**
+     * Gets the request type
+     * @return request type
+     */
     public RequestType getRequestType();
+    /**
+     * Gets the data
+     * @return request data
+     */
     public RequestData getData();
     
 }

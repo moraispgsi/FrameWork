@@ -9,20 +9,27 @@ package RequestDispatcher;
 
 
 /**
- *
+ * Represents a basic request
  * @author Ricardo José Horta Morais
- * @param <D>
+ * @param <D> type of request data
  */
 public abstract class BaseRequest <D extends RequestData> implements Request<D> {
 
     private final RequestType requestType;
     private final RequestData data;
     
+    /**
+     * Contructor
+     * @param requestType type of request
+     * @param data data to be sent
+     */
     public BaseRequest(RequestType requestType,D data) {
         this.requestType = requestType;
         this.data = data;
     }
-
+    /**
+     * Constructor
+     */
     public BaseRequest() {
         this.requestType = null;
         this.data = null;

@@ -6,9 +6,8 @@
 package EventDataManager;
 
 
-public interface FileDoubleClick {
-    
-    public void handle(String filePATH);
-    
+public interface FileActionHandler {
+
+    public void handle(String filePath);
     
 }

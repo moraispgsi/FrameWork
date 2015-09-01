@@ -6,7 +6,7 @@
 package Event;
 
 /**
- *
+ * Represents an event handler
  * @author Ricardo José Horta Morais
  */
 public interface EventHandler {

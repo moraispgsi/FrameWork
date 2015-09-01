@@ -12,13 +12,21 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
+ * Represents a request dispatcher wrapped class that avoids inheritance
+ * by wrapping the object with another class through composition, implementing
+ * the same interface and delegating all the methods.
+ * 
  * @author Ricardo José Horta Morais
  */
 public class WrappedRequestDispatcher implements RequestDispatcher {
 
-    private Map<String, Set<RequestHandler>> handlers = new HashMap<>();
+    private final Map<String, Set<RequestHandler>> handlers = new HashMap<>();
     
+    /**
+     * Fires a request
+     * @param dispatcher Wrapper dispatcher
+     * @param request request to fire
+     */
 
     public void fireRequest(RequestDispatcher dispatcher,Request request) {
         

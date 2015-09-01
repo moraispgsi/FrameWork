@@ -6,11 +6,15 @@
 package Command;
 
 /**
- *
+ * Represents a command
+ * 
  * @author Ricardo José Horta Morais
  */
 public interface Command {
     
+    /**
+     * Execute the command
+     */
     public void executar();
     
 }

@@ -5,10 +5,7 @@
  */
 package DynamicClassUtils;
 
-/**
- *
- * @author Catarina
- */
+
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -17,9 +14,18 @@ import java.net.URLClassLoader;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
+/**
+ * Utility class that allow usage of reflexion
+ * 
+ * @author Ricardo José Horta Morais
+ */
 public class DynamicClassUtils {
 
-
+    /**
+     * Compiles a source file and return a class file
+     * @param sourceFile source file to compile
+     * @return class file generated
+     */
     public static File compileSource(File sourceFile) {
 
         if (sourceFile == null) {
@@ -47,7 +53,17 @@ public class DynamicClassUtils {
         return classFile;
 
     }
-
+    
+    /**
+     * Loads a class file to the default classLoader and returns its class
+     * @param file class file
+     * @return Class extracted from the file
+     * @throws MalformedURLException
+     * @throws ClassNotFoundException
+     * @throws InstantiationException
+     * @throws IllegalAccessException
+     * @throws IOException 
+     */
     public static Class<?> loadClassFile(File file) throws MalformedURLException, ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
 
         String fileName = "";

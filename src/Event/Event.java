@@ -5,7 +5,6 @@
  */
 package Event;
 
-
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -14,23 +13,39 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.logging.Level;
 
-
-
 /**
- *
+ * Represents an event
  * @author Ricardo José Horta Morais
- * @param <D>
+ * @param <D> EventData subclass
  */
 public interface Event <D extends EventData> {
     
+    /**
+     * Gets the type of the event
+     * @return type of the event
+     */
     public EventType getEventType();
+    
+    /**
+     * Gets the data of the event
+     * @return data of the event
+     */
     public D getData();
     
+    /**
+     * Gets an event template by reading a file
+     * @param packageName package name
+     * @param className class name
+     * @return event template
+     */
     public static String getEventTemplate(String packageName,String className){
         
         try {
             File templateFile = new File("src\\Event\\EventTemplate.txt");
-            String template = new Scanner(templateFile).useDelimiter("\\Z").next();
+            String template;
+            try (Scanner scanner = new Scanner(templateFile)) {
+                template = scanner.useDelimiter("\\Z").next();
+            }
             template = template.replaceAll("%EVENT_CLASS", className);
             template = template.replaceAll("%EVENT_PACKAGE", packageName);
             return template;
@@ -39,11 +54,21 @@ public interface Event <D extends EventData> {
         }
     }
     
+    /**
+     * Gets an event data template by reading a file
+     * 
+     * @param packageName package name
+     * @param className class name
+     * @return event data template
+     */
     public static String getEventDataTemplate(String packageName,String className){
         
         try {
             File templateFile = new File("src\\Event\\EventDataTemplate.txt");
-            String template = new Scanner(templateFile).useDelimiter("\\Z").next();
+            String template;
+            try (Scanner scanner = new Scanner(templateFile)) {
+                template = scanner.useDelimiter("\\Z").next();
+            }
             template = template.replaceAll("%EVENT_DATA_CLASS", className);
             template = template.replaceAll("%EVENT_DATA_PACKAGE", packageName);
             
@@ -52,8 +77,15 @@ public interface Event <D extends EventData> {
             throw new RuntimeException(ex.getMessage());
         }
     }
-    
-    public static File makeEvent(String packageName,String className,String dirPath){
+    /**
+     * Creates an event file in a directory path 
+     * 
+     * @param packageName package name
+     * @param className class name
+     * @param dirPath directory path where the file will be made
+     * @return file to the event
+     */
+    public static File createEventFile(String packageName,String className,String dirPath){
         
         String regex = "^[a-zA-Z]+$";
         if (!className.matches(regex)) { 
@@ -80,11 +112,11 @@ public interface Event <D extends EventData> {
             String templateString = getEventTemplate(packageName,className);
 
             FileWriter sw = new FileWriter(filePath);
-            BufferedWriter bw = new BufferedWriter(sw);
-            bw.write(templateString);
-            
-            bw.flush();
-            bw.close();
+            try (BufferedWriter bw = new BufferedWriter(sw)) {
+                bw.write(templateString);
+                
+                bw.flush();
+            }
             
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(Event.class.getName()).log(Level.SEVERE, null, ex);
@@ -94,6 +126,14 @@ public interface Event <D extends EventData> {
         
     }
     
+    /**
+     * Creates an event data file in a directory path 
+     * 
+     * @param packageName package name
+     * @param className class name
+     * @param dirPath directory path where the file will be made
+     * @return file to the event
+     */
     public static File makeEventData(String packageName,String className,String dirPath){
         
         String regex = "^[a-zA-Z_$][a-zA-Z\\d_$]*$";
@@ -121,11 +161,11 @@ public interface Event <D extends EventData> {
             String templateString = getEventDataTemplate(packageName,className);
 
             FileWriter sw = new FileWriter(filePath);
-            BufferedWriter bw = new BufferedWriter(sw);
-            bw.write(templateString);
-            
-            bw.flush();
-            bw.close();
+            try (BufferedWriter bw = new BufferedWriter(sw)) {
+                bw.write(templateString);
+                
+                bw.flush();
+            }
             
         } catch (IOException ex) {
             java.util.logging.Logger.getLogger(Event.class.getName()).log(Level.SEVERE, null, ex);

@@ -6,7 +6,8 @@
 package Event;
 
 /**
- *
+ * Represents an event dispatcher that can propagate events by registering handlers
+ * and firing events
  * @author Ricardo José Horta Morais
  */
 public interface EventDispatcher {
@@ -20,15 +21,14 @@ public interface EventDispatcher {
             
     /**
      * Registers an event handler to handle a specific type of event
-     * @param eventType 
-     * @param handler 
+     * @param eventType type of the event
+     * @param handler handler to register associated to the event type
      */
     public void registerHandler(EventType eventType, EventHandler handler);
     
-    
     /**
      * Unregister an event handler
-     * @param handler 
+     * @param handler handler to remove
      */
     public void unregisterHandler(EventHandler handler);
     

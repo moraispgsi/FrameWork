@@ -12,14 +12,21 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- *
+ * Represents an event dispatcher wrapped class that avoids inheritance
+ * by wrapping the object with another class through composition, implementing
+ * the same interface and delegating all the methods.
+ * 
  * @author Ricardo José Horta Morais
  */
 public class WrappedEventDispatcher implements EventDispatcher {
 
     private final Map<EventType, Set<EventHandler>> handlers = new HashMap<>();
     
-
+    /**
+     * Fires an events that can be catch by a registered handle
+     * @param dispatcher Wrapper dispatcher
+     * @param event event
+     */
     public void fireEvent(EventDispatcher dispatcher,Event event) {
         
         if (dispatcher == null || event == null) {

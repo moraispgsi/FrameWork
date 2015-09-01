@@ -19,10 +19,6 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
-/**
- *
- * @author Catarina
- */
 public class EventDataCreationWizzard extends Stage{
 
     private Label packageNameLabel = new Label("Package name:");
@@ -36,7 +32,9 @@ public class EventDataCreationWizzard extends Stage{
     private EventDataCreationWizzard(){
         super(StageStyle.UTILITY);
         try {
-            javaKeywords = new Scanner(new File("src\\EventDataManager\\JavaKeywords.txt")).useDelimiter("\\Z").next();
+            try (Scanner scanner = new Scanner(new File("src\\EventDataManager\\JavaKeywords.txt"))) {
+                javaKeywords = scanner.useDelimiter("\\Z").next();
+            }
         } catch (FileNotFoundException ex) {
             throw new RuntimeException("Cant load java keywords file."); 
         }

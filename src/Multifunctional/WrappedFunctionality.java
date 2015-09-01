@@ -6,20 +6,25 @@
 package Multifunctional;
 
 /**
- *
- * @author moraisPGSI
+ * Represents a Wrapped Functionality. It supplies all the basic connection code
+ * and its used to avoid composition by implementing the Functionality interface
+ * and delegating all the methods towards the wrapped object.
+ * 
+ * @author Ricado José Horta Morais
  */
 public class WrappedFunctionality implements Functionality {
     
     private final Functionality wrapper;
     private Multifunctional multifunctional;
 
+    /**
+     * Constructor
+     * @param wrapper Functionality that will wrap this object 
+     */
     public WrappedFunctionality(Functionality wrapper) {
         this.wrapper = wrapper;
     }
 
-    
-    
     @Override
     public Multifunctional getMultifunctional() {
         return multifunctional;
@@ -49,6 +54,4 @@ public class WrappedFunctionality implements Functionality {
 
     }
 
-
-    
 }

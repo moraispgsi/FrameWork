@@ -7,6 +7,7 @@ package Event;
 
 /**
  *
+ * //SHOULD BE TRANFORMED INTO AN INTERFACE
  * @author Ricardo José Horta Morais
  */
 public abstract class EventData {

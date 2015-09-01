@@ -11,11 +11,14 @@ import java.util.Set;
 
 /**
  *
+ * Wrapped command center allow for the basic command center to be wrapped inside
+ * another class with the same interface in order to avoid inheritance
+ * 
  * @author Ricardo José Horta Morais
  */
 public class WrappedCommandCenter implements CommandCenter {
     
-    private Map<String,Command> commands = new HashMap<>();
+    private final Map<String,Command> commands = new HashMap<>();
     
     @Override
     public Set<String> getCommands() {

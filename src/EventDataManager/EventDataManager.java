@@ -14,6 +14,7 @@ import java.util.Map;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javafx.application.Platform;
 import javafx.geometry.Pos;
 import javafx.scene.control.Button;
 import javafx.scene.control.ContextMenu;
@@ -35,6 +36,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 
 
@@ -44,7 +46,7 @@ public class EventDataManager extends BorderPane{
     
     private final Label projectPath = new Label("None");
     
-    private final ScrollPane sideBar = new ScrollPane();
+    private final EventDataOutputPane output = new EventDataOutputPane();
     
     private final EventDataCodingArea centerPane = new EventDataCodingArea();
 
@@ -57,32 +59,54 @@ public class EventDataManager extends BorderPane{
         treeView = new EventDataTreeView();
         treeView.setProjectPath(projectDir.getAbsolutePath());
         
-        treeView.setOnFileDoubleClick(e->{
+        treeView.setOnFileOpenRequest(e->{
         
-             File file = new File(e);
-                    if(file.getName().toLowerCase().endsWith(".java")){
-                        
-                        try {
-                            
-                            String template = new Scanner(file).useDelimiter("\\Z").next();
-                            
-                            centerPane.openTab(file.getAbsolutePath());
+            File file = new File(e);
+            
+            
+            
+            if(file.getName().toLowerCase().endsWith(".java")){
 
-                            
-                        } catch (FileNotFoundException ex) {
-                            Logger.getLogger(EventDataManager.class.getName()).log(Level.SEVERE, null, ex);
-                        }
-                        
+                try {
+                    try (Scanner scanner = new Scanner(file)) {
+                        String template = scanner.useDelimiter("\\Z").next();
                     }
+
+                    centerPane.openTab(file.getAbsolutePath());
+
+
+                } catch (FileNotFoundException ex) {
+                    Logger.getLogger(EventDataManager.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
         
         });
+        
+        treeView.setOnFileDebugRequest(path->{
+            
+            EventDataCompiler compiler = new EventDataCompiler(path);
+            
+            /*
+            EventDataClassDebugger debugger = new EventDataClassDebugger(path);
+       
+            */
+        });
+        
 
         this.projectDir = projectDir;
         
         setTopBorder(stage);
         setLeftBorder();
         setCenterBorder();
+        setBottomBorder();
 
+    }
+    
+    private void setBottomBorder(){
+        
+        setBottom(output);
+        
     }
     
     private void setTopBorder(Stage stage){
@@ -101,16 +125,22 @@ public class EventDataManager extends BorderPane{
             
             if(projectFolder != null){
                 
+                setProjectDir(projectFolder);
                 
-                treeView.setProjectPath(projectFolder.getAbsolutePath());
-                
-                projectDir = projectFolder;
-                projectPath.setText(projectFolder.getAbsolutePath());
-                
-                treeView.update();
             }
             
-        });  
+        }); 
+        
+        MenuItem saveFile = new MenuItem("Save");
+        saveFile.setOnAction(e -> {
+            
+            EventDataTab tab = (EventDataTab) centerPane.getSelectionModel().getSelectedItem();
+            
+            if(tab != null)
+                tab.save();
+            
+        });
+        
         
         MenuItem exit = new MenuItem("Exit");
         exit.setOnAction(e ->{
@@ -120,7 +150,7 @@ public class EventDataManager extends BorderPane{
         }); 
 
  
-        menuFile.getItems().addAll(openProject,exit);
+        menuFile.getItems().addAll(openProject,saveFile,exit);
         
         
         Menu menuEdit = new Menu("Edit");
@@ -171,25 +201,17 @@ public class EventDataManager extends BorderPane{
     
     private void setLeftBorder(){
         
-        this.setLeft(sideBar);
-        
         VBox vBox = new VBox();
-
+        
         vBox.getChildren().addAll(treeView);
+        
+        Platform.runLater(()->
+            treeView.update()
+        );
+        
 
-        treeView.update(); 
-
-        sideBar.setContent(vBox);
+        this.setLeft(vBox);
         
-    }
-    
-    private ImageView createIcon(Image image){
-        
-        ImageView imageView = new ImageView(image);
-        imageView.setFitWidth(iconSize);
-        imageView.setFitHeight(iconSize);
-        
-        return imageView;
     }
 
     public File getProjectDir() {
@@ -197,10 +219,17 @@ public class EventDataManager extends BorderPane{
     }
 
     public void setProjectDir(File projectDir) {
+        
+        if(projectDir.equals(this.projectDir))
+            return;
+        
+        File backupDir = this.projectDir;
         this.projectDir = projectDir;
         projectPath.setText(projectDir.getAbsolutePath());
+        output.println("Project changed from \"" + backupDir.getAbsolutePath() + "\" to \""+ projectDir.getAbsolutePath()+"\"");
         
-        treeView.update();
+        treeView.setProjectPath(projectDir.getAbsolutePath());
+
         
     }
 

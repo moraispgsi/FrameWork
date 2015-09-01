@@ -8,17 +8,26 @@ package RequestDispatcher;
 
 
 /**
- *
+ * Represents the request type
+ * 
  * @author Ricardo José Horta Morais
  */
 public final class RequestType {
 
     private final String type;
     
+    /**
+     * Constructor
+     * @param type request type
+     */
     public RequestType(String type) {
         this.type = type;
     }
-
+    
+    /**
+     * Gets the request type
+     * @return type of the request
+     */
     public String getType(){
         return type;
     }

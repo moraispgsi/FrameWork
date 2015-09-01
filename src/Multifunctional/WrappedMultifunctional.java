@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package Multifunctional;
 
 import Command.Command;
@@ -15,8 +11,11 @@ import java.util.HashSet;
 import java.util.Set;
 
 /**
- *
- * @author moraisPGSI
+ * Represents a Wrapped Multifunctional. It supplies all the basic connection code
+ * and its used to avoid composition by implementing the Multifunctional interface
+ * and delegating all the methods towards the wrapped object.
+ * 
+ * @author Ricado José Horta Morais
  */
 public class WrappedMultifunctional implements Multifunctional {
     
@@ -70,11 +69,9 @@ public class WrappedMultifunctional implements Multifunctional {
     @Override
     public boolean hasFunctionality(Class<? extends Functionality> functionality) {
         
-        for(Functionality element:functionalities){
-            if( element.getClass().equals(functionality) )
-                return true;
-        }
-        return false;
+        return functionalities
+                .stream()
+                .anyMatch((element) ->  element.getClass().equals(functionality));
     }
 
     @Override

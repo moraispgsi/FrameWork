@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package Entity;
 
 import Command.Command;
@@ -16,24 +12,32 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 /**
- *
- * @author moraisPGSI
+ * An entity stands for a  multifunctional interface. It allow it to be composed of many
+ * Functionalities at runtime in order to mean anything. 
+ * 
+ * @author Ricado José Horta Morais
  */
 public class Entity implements Multifunctional  {
     
     private static final AtomicLong idGenerator = new AtomicLong();
 
     private final long id;
-    
-    public WrappedMultifunctional multifunctional = new WrappedMultifunctional();
 
+    private final WrappedMultifunctional multifunctional = new WrappedMultifunctional();
     
+    /**
+     * Contructor
+    */
     public Entity() {
 
         id = idGenerator.incrementAndGet();
 
     }
-
+    
+    /**
+     * Gets an unique Id assigned to this Entity
+     * @return id
+     */
     public long getId() {
         return id;
     }

@@ -12,6 +12,10 @@ import javafx.scene.Scene;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
+/**
+ * 
+ * @author testing
+ */
 public class Test  extends Application {
     
     @Override
@@ -29,7 +33,10 @@ public class Test  extends Application {
         primaryStage.show();
         
     }
-    
+    /**
+     * Main
+     * @param args args
+     */
     public static void main(String[] args) {
         launch(args);
     }

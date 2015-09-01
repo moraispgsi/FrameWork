@@ -16,9 +16,13 @@ import java.util.Scanner;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.property.BooleanProperty;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.scene.Node;
 import javafx.scene.control.ContextMenu;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -26,6 +30,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.util.Duration;
 
 
 
@@ -43,11 +48,12 @@ public class EventDataTreeView extends TreeView {
     private String projectPath;
     
     
-    private TreeItem<Label> rootItem;
-    private final Map<TreeItem<Label>,String> filesMap = new HashMap<>();
-    private final Map<TreeItem<Label>,String> dirMap = new HashMap<>();
+    private final TreeItem<Node> rootItem;
+    private final Map<TreeItem<Node>,String> filesMap = new HashMap<>();
+    private final Map<TreeItem<Node>,String> dirMap = new HashMap<>();
     
     private FileActionHandler onFileOpenRequest;
+    private FileActionHandler onFileDebugRequest;
     
     private final IntegerProperty iconSize = new SimpleIntegerProperty(15);
     
@@ -77,13 +83,21 @@ public class EventDataTreeView extends TreeView {
         this.onFileOpenRequest = onFileOpenRequest;
     }
 
+    public void setOnFileDebugRequest(FileActionHandler onFileDebugRequest) {
+        this.onFileDebugRequest = onFileDebugRequest;
+    }
+
     public void setProjectPath(String projectPath) {
         
         if(this.projectPath != null && this.projectPath.equals(projectPath))
             return;
         
         this.projectPath = projectPath;
-        update();
+        
+        Platform.runLater(()->
+            update()
+        );
+        
 
     }
     
@@ -115,9 +129,8 @@ public class EventDataTreeView extends TreeView {
                 continue;
             }
             
-            
-            
-            TreeItem<Label> packageItem = makePackageItem(dir);
+
+            TreeItem<Node> packageItem = makePackageItem(dir);
             
             if(expandedDirectories.containsKey(dir.getAbsolutePath())){
                 packageItem.setExpanded(expandedDirectories.get(dir.getAbsolutePath()));  
@@ -140,7 +153,11 @@ public class EventDataTreeView extends TreeView {
                 
                 try
                 {
-                    String fileContent = new Scanner(file).useDelimiter("\\Z").next();
+                    String fileContent;
+                    try(Scanner scanner = new Scanner(file)){
+                        fileContent = scanner.useDelimiter("\\Z").next();
+                    }
+                    
 
                     Pattern findExtension = Pattern.compile("class[\\s\\S]*?\\sextends\\s*(\\w*)");
 
@@ -160,7 +177,7 @@ public class EventDataTreeView extends TreeView {
                     continue;
                 }
 
-                TreeItem<Label> fileItem = makeFileItem(file,packageItem);
+                TreeItem<Node> fileItem = makeFileItem(file,packageItem);
 
                 packageItem.getChildren().add(fileItem);
 
@@ -175,8 +192,7 @@ public class EventDataTreeView extends TreeView {
 
     }
     
-    
-    private TreeItem<Label> makeFileItem(File file,TreeItem<Label> dirItem){
+    private TreeItem<Node> makeFileItem(File file,TreeItem<Node> dirItem){
         
         if(file == null || file.isDirectory()){
             throw new RuntimeException("Invalid file.");
@@ -184,31 +200,50 @@ public class EventDataTreeView extends TreeView {
         
         FileContextMenu fileContextMenu = new FileContextMenu(file.getAbsolutePath());
         
- 
-        Label nameLabel = new Label(file.getName());
-        nameLabel.setContextMenu(fileContextMenu);
-
-        TreeItem<Label> fileItem = new TreeItem<> (nameLabel,createIcon(eventDataIconImage)); 
-
+        ProgressBarTreeItem fileItem = new ProgressBarTreeItem(file.getName(),createIcon(eventDataIconImage));
+        fileItem.setContextMenu(fileContextMenu);
+        
+        
         fileContextMenu.setDeleteHandle(path->{
         
-            dirItem.getChildren().remove(fileItem);
-        
-        });
-        
-        fileContextMenu.setOpenHandle(path->{
-            if(onFileOpenRequest!=null)
-                onFileOpenRequest.handle(path);
+            fileItem.showProgressBar(300,()->{
+                dirItem.getChildren().remove(fileItem);
+            });
+            
+            
             
         });
         
+        fileContextMenu.setOpenHandle(path->{
+            
+           
+            fileItem.showProgressBar(300,()->{
+                 if(onFileOpenRequest!=null)
+                    onFileOpenRequest.handle(path);
+                
+            });
+            
+            
+  
+            
+        });
         
+        fileContextMenu.setDebugHandle(path->{
+            
+            fileItem.showProgressBar();
+            if(onFileDebugRequest != null)
+                onFileDebugRequest.handle(path);
+            
+            fileItem.showLabel();
+        });
+
+        fileItem.showProgressBar(300,null);
         
         return fileItem;
 
     }
     
-    private TreeItem<Label> makePackageItem(File dirFile){
+    private TreeItem<Node> makePackageItem(File dirFile){
         
         if(dirFile == null || !dirFile.isDirectory())
             throw new RuntimeException("Invalid folder.");
@@ -217,24 +252,30 @@ public class EventDataTreeView extends TreeView {
         dirContextMenu.setOnShowing(e->{
 
         });
+        
+        Label dirLabel = new Label(dirFile.getName());
+        dirLabel.setContextMenu(dirContextMenu);
+
+
+        TreeItem<Node> dirItem = new TreeItem<> (dirLabel,createIcon(packageIconImage)); 
 
         MenuItem newEventData = new MenuItem("New eData");
         newEventData.setOnAction(e->{
 
             EventDataCreationWizzard wizzard = new EventDataCreationWizzard(new File(projectPath),dirFile.getName());
             wizzard.showAndWait();
+            
+            dirItem.setExpanded(true);
             update();
+        
+           
 
         });
 
 
         dirContextMenu.getItems().addAll(newEventData);
 
-        Label dirLabel = new Label(dirFile.getName());
-        dirLabel.setContextMenu(dirContextMenu);
-
-
-        TreeItem<Label> dirItem = new TreeItem<> (dirLabel,createIcon(packageIconImage)); 
+        
 
         
         return dirItem;
@@ -262,7 +303,5 @@ public class EventDataTreeView extends TreeView {
         if(iconSize > 1)
             this.iconSize.setValue(iconSize);
     }
-    
-    
     
 }

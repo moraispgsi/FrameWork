@@ -13,7 +13,6 @@ import java.io.IOException;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javafx.scene.control.Label;
 import javafx.scene.control.Tab;
 import javafx.scene.control.TextArea;
 import javafx.scene.image.Image;
@@ -25,62 +24,67 @@ public class EventDataTab extends Tab {
     
     private final File eventDataIconFile = new File("src/Main/EventData.png");
     private final Image eventDataIconImage = new Image(eventDataIconFile.toURI().toString());
-    
-    
+
     private final TextArea editor = new TextArea();
     private final String filePath;
     private final String fileName;
+    private boolean wasEdited = false;
 
     public EventDataTab(String filePath) {
-        
-        
+
         try {
-            
-            this.filePath = filePath;
-            
+   
             File file = new File(filePath);
+            
+            if(!file.exists())
+                throw new RuntimeException("File must exist.");
+                
+            this.filePath = filePath;
             
             fileName = file.getName();
             setText(fileName);
-        
-            setGraphic(new ImageView(eventDataIconImage));
             
-            String code = new Scanner(file).useDelimiter("\\Z").next();
-            
-            
-            editor.setOnKeyPressed(e->{
-                
-                if(e.isControlDown() && e.getCode().equals(KeyCode.S)){
-                    
-                    save();
-                    
-                    
-                    
-                }else{
-                    
-                    setText(fileName + "*");
-                    
-                    setStyle("-fx-font-weight: bold;");
 
-                    
-                }
-                    
-                    
-            
-            });
-            
-            editor.setText(code);
-            
-            editor.setPrefHeight(Integer.MAX_VALUE);
-            
+            setGraphic(new ImageView(eventDataIconImage));
+            String code;
+            try (Scanner scanner = new Scanner(file)) {
+                code = scanner.useDelimiter("\\Z").next();
+            }
+
+            initEditor(code);
+
             setContent(editor);
             
         } catch (FileNotFoundException ex) {
             throw new RuntimeException("File path must exist.");
         }
 
+    }
+
+    
+    private void initEditor(String code){
+        
+        editor.setPrefHeight(Integer.MAX_VALUE);
+        editor.setText(code);
+        editor.textProperty().addListener(e->{
+
+            setText(fileName + "*");
+            setStyle("-fx-font-weight: bold;"); 
+            wasEdited = true;
+        });
+        
+        editor.setOnKeyPressed(e->{
+                
+            if(e.isControlDown() && e.getCode().equals(KeyCode.S)){
+
+                save();
+
+            }
+
+        });
         
     }
+    
     
     public void save(){
         
@@ -100,9 +104,23 @@ public class EventDataTab extends Tab {
             
             setText(fileName);
             setStyle("");
+            wasEdited = false;
             
         }        
         
     }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public boolean isWasEdited() {
+        return wasEdited;
+    }
+    
     
 }
