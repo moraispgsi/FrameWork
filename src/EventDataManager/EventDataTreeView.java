@@ -30,6 +30,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.MouseButton;
 import javafx.util.Duration;
 
 
@@ -52,6 +53,9 @@ public class EventDataTreeView extends TreeView {
     private final Map<TreeItem<Node>,String> filesMap = new HashMap<>();
     private final Map<TreeItem<Node>,String> dirMap = new HashMap<>();
     
+    private final Map<String,TreeItem<Node>> pathMap = new HashMap<>();
+
+    
     private FileActionHandler onFileOpenRequest;
     private FileActionHandler onFileDebugRequest;
     
@@ -67,14 +71,17 @@ public class EventDataTreeView extends TreeView {
         
         setOnMouseClicked(e->{
             
-            if(e.getClickCount() == 2){
-                TreeItem<Label> item = (TreeItem<Label>) getSelectionModel().getSelectedItem();
- 
-                if(onFileOpenRequest!= null && filesMap.containsKey(item))
-                    onFileOpenRequest.handle(filesMap.get(item));
-                
-            }
+            if(e.getButton() == MouseButton.PRIMARY && e.getClickCount() == 2){
+                TreeItem<Node> item = (TreeItem<Node>) getSelectionModel().getSelectedItem();
+                if(onFileOpenRequest!= null && filesMap.containsKey(item)){
+                    ProgressBarTreeItem barItem = (ProgressBarTreeItem)item;
+                    barItem.showProgressBar(300,()->{
+                 
+                        onFileOpenRequest.handle(filesMap.get(item));
 
+                    });
+                }
+            }
         });
 
     }
@@ -104,7 +111,8 @@ public class EventDataTreeView extends TreeView {
     public void update(){
         
         filesMap.clear();
-        
+       
+        Map<String,TreeItem<Node>> newPathMap = new HashMap<>();
         
         Map<String,Boolean> expandedDirectories = new HashMap<>();
         
@@ -128,9 +136,16 @@ public class EventDataTreeView extends TreeView {
             if(!dir.isDirectory()){
                 continue;
             }
+            TreeItem<Node> packageItem;
+            if(pathMap.containsKey(dir.getAbsolutePath())){
+                packageItem = pathMap.get(dir.getAbsolutePath());
+                packageItem.getChildren().clear();
+            }else{
+                packageItem = makePackageItem(dir);
+            }
+            newPathMap.put(dir.getAbsolutePath(), packageItem);
             
-
-            TreeItem<Node> packageItem = makePackageItem(dir);
+            
             
             if(expandedDirectories.containsKey(dir.getAbsolutePath())){
                 packageItem.setExpanded(expandedDirectories.get(dir.getAbsolutePath()));  
@@ -176,10 +191,20 @@ public class EventDataTreeView extends TreeView {
                 } catch (FileNotFoundException ex) {
                     continue;
                 }
-
-                TreeItem<Node> fileItem = makeFileItem(file,packageItem);
+                
+                TreeItem<Node> fileItem;
+                if(pathMap.containsKey(file.getAbsolutePath())){
+                    fileItem = pathMap.get(file.getAbsolutePath());
+                }else{
+                    fileItem = makeFileItem(file,packageItem);
+                }
+                    
+                newPathMap.put(file.getAbsolutePath(),fileItem);
+                
 
                 packageItem.getChildren().add(fileItem);
+                
+                
 
                 filesMap.put(fileItem, file.getAbsolutePath());
 
@@ -188,7 +213,9 @@ public class EventDataTreeView extends TreeView {
             
 
         }
-
+        
+        pathMap.clear();
+        pathMap.putAll(newPathMap);
 
     }
     
@@ -275,9 +302,7 @@ public class EventDataTreeView extends TreeView {
 
         dirContextMenu.getItems().addAll(newEventData);
 
-        
 
-        
         return dirItem;
         
     }
