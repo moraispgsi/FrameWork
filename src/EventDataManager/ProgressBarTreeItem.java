@@ -60,9 +60,6 @@ public class ProgressBarTreeItem extends TreeItem<Node>{
             )
         ).play();
         
-        
-        
-        
     }
     
     public void showProgressBar(){

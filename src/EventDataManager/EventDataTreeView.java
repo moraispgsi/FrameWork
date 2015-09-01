@@ -48,19 +48,17 @@ public class EventDataTreeView extends TreeView {
     
     private String projectPath;
     
-    
     private final TreeItem<Node> rootItem;
     private final Map<TreeItem<Node>,String> filesMap = new HashMap<>();
     private final Map<TreeItem<Node>,String> dirMap = new HashMap<>();
     
     private final Map<String,TreeItem<Node>> pathMap = new HashMap<>();
 
-    
     private FileActionHandler onFileOpenRequest;
     private FileActionHandler onFileDebugRequest;
+    private FileActionHandler onFileDeleteRequest;
     
     private final IntegerProperty iconSize = new SimpleIntegerProperty(15);
-    
     
     public EventDataTreeView() {
         
@@ -92,6 +90,10 @@ public class EventDataTreeView extends TreeView {
 
     public void setOnFileDebugRequest(FileActionHandler onFileDebugRequest) {
         this.onFileDebugRequest = onFileDebugRequest;
+    }
+
+    public void setOnFileDeleteRequest(FileActionHandler onFileDeleteRequest) {
+        this.onFileDeleteRequest = onFileDeleteRequest;
     }
 
     public void setProjectPath(String projectPath) {
@@ -235,6 +237,9 @@ public class EventDataTreeView extends TreeView {
         
             fileItem.showProgressBar(300,()->{
                 dirItem.getChildren().remove(fileItem);
+                
+                if(onFileDeleteRequest !=null)
+                    onFileDeleteRequest.handle(path);
             });
             
             
@@ -242,28 +247,25 @@ public class EventDataTreeView extends TreeView {
         });
         
         fileContextMenu.setOpenHandle(path->{
-            
-           
+
             fileItem.showProgressBar(300,()->{
                  if(onFileOpenRequest!=null)
                     onFileOpenRequest.handle(path);
                 
             });
-            
-            
-  
-            
+
         });
         
         fileContextMenu.setDebugHandle(path->{
             
-            fileItem.showProgressBar();
-            if(onFileDebugRequest != null)
-                onFileDebugRequest.handle(path);
-            
-            fileItem.showLabel();
-        });
+            fileItem.showProgressBar(300,()->{
 
+                if(onFileDebugRequest != null)
+                    onFileDebugRequest.handle(path);
+
+            });
+        });
+        
         fileItem.showProgressBar(300,null);
         
         return fileItem;

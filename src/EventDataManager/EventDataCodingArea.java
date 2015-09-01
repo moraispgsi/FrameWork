@@ -41,5 +41,14 @@ public class EventDataCodingArea extends TabPane {
         });
 
     }
+    
+    public void closeTab(String filePath){
+    
+        if(pathToTab.containsKey(filePath)){
+            getTabs().remove(pathToTab.get(filePath));
+            
+            pathToTab.remove(filePath);
+        }
+    }
 
 }
