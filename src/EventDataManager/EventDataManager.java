@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FileNotFoundException;
 import java.io.FilenameFilter;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Scanner;
@@ -62,9 +63,7 @@ public class EventDataManager extends BorderPane{
         treeView.setOnFileOpenRequest(e->{
         
             File file = new File(e);
-            
-            
-            
+
             if(file.getName().toLowerCase().endsWith(".java")){
 
                 try {
@@ -85,12 +84,21 @@ public class EventDataManager extends BorderPane{
         
         treeView.setOnFileDebugRequest(path->{
             
-            EventDataCompiler compiler = new EventDataCompiler(path);
+            File file = DynamicClassUtils.DynamicClassUtils.compileSource(new File(path));
+            try{
+                Class<?> className = DynamicClassUtils.DynamicClassUtils.loadClassFile(file);
+                
+                EventDataClassDebugger debugger = new EventDataClassDebugger(className);
+            } catch (ClassNotFoundException | InstantiationException | IllegalAccessException | IOException ex) {
+                Logger.getLogger(EventDataManager.class.getName()).log(Level.SEVERE, null, ex);
+            }
             
-            /*
-            EventDataClassDebugger debugger = new EventDataClassDebugger(path);
-       
-            */
+        });
+        
+        treeView.setOnFileDeleteRequest(path->{
+            
+            centerPane.closeTab(path);
+ 
         });
         
 
@@ -147,7 +155,7 @@ public class EventDataManager extends BorderPane{
             
             
             
-        }); 
+        });
 
  
         menuFile.getItems().addAll(openProject,saveFile,exit);
