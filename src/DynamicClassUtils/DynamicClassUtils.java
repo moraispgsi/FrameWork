@@ -33,8 +33,8 @@ public class DynamicClassUtils {
         }
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-
-        if (compiler.run(null, null, null, sourceFile.getPath()) != 0) {
+        
+        if (compiler.run(null, null, null, sourceFile.getPath(),"-parameters") != 0) {
             throw new RuntimeException("Error compiling.");
         }
 
