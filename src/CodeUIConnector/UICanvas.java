@@ -7,6 +7,7 @@ package CodeUIConnector;
 
 
 
+import java.io.File;
 import java.lang.reflect.Method;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
@@ -18,24 +19,22 @@ import javafx.scene.Node;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
-import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 
 
-public class UICanvas extends Pane {
+public class UICanvas extends Region {
     
     private final UISocketCanvasSet socketSet = new UISocketCanvasSet();
-    private String file;
+    private String filePath;
     private Method method;
     private ObjectProperty<Point2D> sceneBoundsProperty = new SimpleObjectProperty<>();
     
-   
-    
     private UIVariableOutputSocket draggingSocket;
     
-    public UICanvas(String file, Method method) {
-        this.file = file;
+    public UICanvas(String filePath, Method method) {
+        this.filePath = filePath;
         this.method = method;
         
         socketSet.getInputSockets()
@@ -60,25 +59,31 @@ public class UICanvas extends Pane {
             childrenChangeListener(change);
         }); 
         
-        UIStartMethod startUI = new UIStartMethod(file,method);
+        UIStartMethod startUI = new UIStartMethod(filePath,method);
         getChildren().add(startUI);
-
+        
+        File file = new File(filePath);
+        
+        
+        
+        
         if(!method.getReturnType().equals(Void.TYPE)){
             
-            UIEndMethod endUI = new UIEndMethod(file,method);
+            UIEndMethod endUI = new UIEndMethod(filePath,method);
             getChildren().add(endUI);
         
         }
-        
     }
-    
-
 
     private void addInputSocketListener(SetChangeListener.Change<? extends UIVariableInputSocket> change) {
 
         if (change.wasAdded()) {
             
             change.getElementAdded().getUISocket().setOnDragOver(e->{
+                
+                if (draggingSocket == null || 
+                        !change.getElementAdded().getVariableType().equals(draggingSocket.getVariableType()))
+                    return;
                     
                 e.acceptTransferModes(TransferMode.ANY);
                 e.consume();
@@ -86,100 +91,100 @@ public class UICanvas extends Pane {
             
             change.getElementAdded().getUISocket().setOnDragDropped(e -> {
 
-                if (draggingSocket != null) {
+                if (draggingSocket == null || 
+                        !change.getElementAdded().getVariableType().equals(draggingSocket.getVariableType()))
+                    return;
+                    
+                UISocket inputUISocket = change.getElementAdded().getUISocket();
+                UISocket outputUISocket = draggingSocket.getUISocket();
 
-                    UISocket inputUISocket = change.getElementAdded().getUISocket();
-                    UISocket outputUISocket = draggingSocket.getUISocket();
-                   
-                    
-                    DoubleBinding startX = new DoubleBinding(){
-                        
-                        {
-                            bind(sceneBoundsProperty,inputUISocket.getBoundsProperty());
-                        }
-                        
-                        @Override
-                        protected double computeValue() {
-                            double socketMax = inputUISocket.getBoundsProperty().getValue().getMaxX();
-                            double socketMin = inputUISocket.getBoundsProperty().getValue().getMinX();
-                            double center = socketMin + (socketMax - socketMin)/2;
-                 
-                            
-                            return center - sceneBoundsProperty.getValue().getX();
-                            
-                        }
+                change.getElementAdded().setOutputSource(draggingSocket);
 
-                    };
-                    
-                    DoubleBinding startY = new DoubleBinding(){
-                        
-                        {
-                            bind(sceneBoundsProperty,inputUISocket.getBoundsProperty());
-                        }
-                        
-                        @Override
-                        protected double computeValue() {
-                            double socketMax = inputUISocket.getBoundsProperty().getValue().getMaxY();
-                            double socketMin = inputUISocket.getBoundsProperty().getValue().getMinY();
-                            double center = socketMin + (socketMax - socketMin)/2;
-          
-                            return center - sceneBoundsProperty.getValue().getY();
-                        }
+                DoubleBinding startX = new DoubleBinding(){
 
-                    };
-                    
-                    DoubleBinding endX = new DoubleBinding(){
-                        
-                        {
-                            bind(sceneBoundsProperty,outputUISocket.getBoundsProperty());
-                        }
-                        
-                        @Override
-                        protected double computeValue() {
-                            
-                            double socketMax = outputUISocket.getBoundsProperty().getValue().getMaxX();
-                            double socketMin = outputUISocket.getBoundsProperty().getValue().getMinX();
-                            double center = socketMin + (socketMax - socketMin)/2;
-                            
-                            return center - sceneBoundsProperty.getValue().getX();
-                        }
+                    {
+                        bind(sceneBoundsProperty,inputUISocket.getPlugBoundsProperty());
+                    }
 
-                    };
-                    
-                    DoubleBinding endY = new DoubleBinding(){
-                        
-                        {
-                            bind(sceneBoundsProperty,outputUISocket.getBoundsProperty());
-                        }
-                        
-                        @Override
-                        protected double computeValue() {
-                            double socketMax = outputUISocket.getBoundsProperty().getValue().getMaxY();
-                            double socketMin = outputUISocket.getBoundsProperty().getValue().getMinY();
-                            double center = socketMin + (socketMax - socketMin)/2;
-            
-                            return center - sceneBoundsProperty.getValue().getY();
-                        }
+                    @Override
+                    protected double computeValue() {
+                        double socketMax = inputUISocket.getPlugBoundsProperty().getValue().getMaxX();
+                        double socketMin = inputUISocket.getPlugBoundsProperty().getValue().getMinX();
+                        double center = socketMin + (socketMax - socketMin)/2;
 
-                    };
-                    
-                    
-                    HorizontalCurvedLine line = new HorizontalCurvedLine();
-                    line.startXProperty().bind(startX);
-                    line.startYProperty().bind(startY);
-                    line.endXProperty().bind(endX);
-                    line.endYProperty().bind(endY);
-                    line.setStroke(Color.LIGHTBLUE);
-                    line.setStrokeWidth(2);
-                    line.setStrokeLineCap(StrokeLineCap.ROUND);
-                    line.setFill(new Color(0, 0,0, 0));
-                    
-                    this.getChildren().addAll(line);
-                    
-                    e.consume();
-                    
-                    
-                }
+
+                        return center - sceneBoundsProperty.getValue().getX();
+
+                    }
+
+                };
+
+                DoubleBinding startY = new DoubleBinding(){
+
+                    {
+                        bind(sceneBoundsProperty,inputUISocket.getPlugBoundsProperty());
+                    }
+
+                    @Override
+                    protected double computeValue() {
+                        double socketMax = inputUISocket.getPlugBoundsProperty().getValue().getMaxY();
+                        double socketMin = inputUISocket.getPlugBoundsProperty().getValue().getMinY();
+                        double center = socketMin + (socketMax - socketMin)/2;
+
+                        return center - sceneBoundsProperty.getValue().getY();
+                    }
+
+                };
+
+                DoubleBinding endX = new DoubleBinding(){
+
+                    {
+                        bind(sceneBoundsProperty,outputUISocket.getPlugBoundsProperty());
+                    }
+
+                    @Override
+                    protected double computeValue() {
+
+                        double socketMax = outputUISocket.getPlugBoundsProperty().getValue().getMaxX();
+                        double socketMin = outputUISocket.getPlugBoundsProperty().getValue().getMinX();
+                        double center = socketMin + (socketMax - socketMin)/2;
+
+                        return center - sceneBoundsProperty.getValue().getX();
+                    }
+
+                };
+
+                DoubleBinding endY = new DoubleBinding(){
+
+                    {
+                        bind(sceneBoundsProperty,outputUISocket.getPlugBoundsProperty());
+                    }
+
+                    @Override
+                    protected double computeValue() {
+                        double socketMax = outputUISocket.getPlugBoundsProperty().getValue().getMaxY();
+                        double socketMin = outputUISocket.getPlugBoundsProperty().getValue().getMinY();
+                        double center = socketMin + (socketMax - socketMin)/2;
+
+                        return center - sceneBoundsProperty.getValue().getY();
+                    }
+
+                };
+
+                HorizontalCurvedLine line = new HorizontalCurvedLine();
+                line.startXProperty().bind(startX);
+                line.startYProperty().bind(startY);
+                line.endXProperty().bind(endX);
+                line.endYProperty().bind(endY);
+                line.setStroke(Color.LIGHTBLUE);
+                line.setStrokeWidth(2);
+                line.setStrokeLineCap(StrokeLineCap.ROUND);
+                line.setFill(new Color(0, 0,0, 0));
+
+                this.getChildren().addAll(line);
+
+                e.consume();
+
 
             });
 
@@ -204,9 +209,33 @@ public class UICanvas extends Pane {
                 ClipboardContent content = new ClipboardContent();
                 content.putString("");
                 db.setContent(content);
+                
+                
+                 socketSet
+                         .getInputSockets()
+                         .stream()
+                         .filter(socket -> socket.getVariableType().equals(change.getElementAdded().getVariableType()))
+                         .forEach(socket -> {socket.getUISocket().setAvailable();});
+                
                         
                 e.consume();
 
+            });
+            
+            change.getElementAdded().getUISocket().setOnDragDone(e -> {
+            
+                    socketSet
+                         .getInputSockets()
+                         .stream()
+                         .filter(socket -> socket.getVariableType().equals(change.getElementAdded().getVariableType()))
+                         .forEach(socket -> {
+                             if(socket.getOutputSource() == null)
+                                socket.getUISocket().setIdle();
+                             else
+                                socket.getUISocket().setConnected();
+                         });
+                    
+                    e.consume();
             });
 
         }
@@ -248,8 +277,5 @@ public class UICanvas extends Pane {
             }
         
     }
-    
-    
 
-    
 }
