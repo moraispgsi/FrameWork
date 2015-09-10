@@ -5,9 +5,9 @@
  */
 package EventDataManager;
 
+import CodeUIConnector.UICanvas;
 import CodeUIConnector.UIEndMethod;
 import CodeUIConnector.UIMethod;
-import CodeUIConnector.UIStartMethod;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -19,6 +19,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -69,9 +70,11 @@ public class EventDataClassDebugger extends Stage{
             rootItem.getChildren().add(methodItem);
             
             pane.setPrefSize(500,500);
-            pane.getChildren().add(new UIStartMethod("",method));
-            pane.getChildren().add(new UIMethod("",method));
-            pane.getChildren().add(new UIEndMethod("",method));
+            
+            Pane canvas = new UICanvas("",method);
+            canvas.setPrefSize(200,200);
+            pane.getChildren().add(canvas);
+
         }
         borderPane.setCenter(pane);
         
