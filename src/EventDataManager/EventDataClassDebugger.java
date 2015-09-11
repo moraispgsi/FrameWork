@@ -19,6 +19,7 @@ import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
@@ -71,7 +72,7 @@ public class EventDataClassDebugger extends Stage{
             
             pane.setPrefSize(500,500);
             
-            Pane canvas = new UICanvas("",method);
+            Region canvas = new UICanvas("",method);
             canvas.setPrefSize(200,200);
             pane.getChildren().add(canvas);
 

@@ -7,11 +7,7 @@ package CodeUIConnector;
 
 
 import javafx.beans.binding.DoubleBinding;
-import javafx.beans.property.DoubleProperty;
-import javafx.beans.property.SimpleDoubleProperty;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.CubicCurve;
-import javafx.scene.shape.StrokeLineCap;
 import org.apache.commons.math3.geometry.euclidean.twod.*;
 
 
@@ -20,13 +16,7 @@ import org.apache.commons.math3.geometry.euclidean.twod.*;
  * @author Ricardo José Horta Morais
  */
 public class HorizontalCurvedLine extends CubicCurve {
-    
 
-    private final double anguloRadianos = Math.PI /8;
-
-
-    
-    
     public HorizontalCurvedLine() {
         
 
@@ -103,19 +93,19 @@ public class HorizontalCurvedLine extends CubicCurve {
             Vector2D A = new Vector2D(startXProperty().getValue(),startYProperty().getValue());
             Vector2D B = new Vector2D(endXProperty().getValue(),endYProperty().getValue());
             
-            Vector2D direcao = B.subtract(A);
+            Vector2D direction = B.subtract(A);
 
-            Double distancia = (new Vector2D(1,0)).dotProduct(direcao);
+            Double distance = (new Vector2D(1,0)).dotProduct(direction);
             
-            if(direcao.equals(Vector2D.ZERO) || distancia == 0)
+            if(direction.equals(Vector2D.ZERO) || distance == 0)
                 return A;
             
-            direcao = new Vector2D(-1,0).scalarMultiply(distancia).normalize();
+            direction = new Vector2D(-1,0).scalarMultiply(distance).normalize();
 
-            direcao = direcao.scalarMultiply(distancia/2);
+            direction = direction.scalarMultiply(distance/2);
 
-            Double x = direcao.getX() + startXProperty().getValue();
-            Double y = direcao.getY() + startYProperty().getValue();
+            Double x = direction.getX() + startXProperty().getValue();
+            Double y = direction.getY() + startYProperty().getValue();
             
             
             return new Vector2D(x,y);
@@ -130,19 +120,19 @@ public class HorizontalCurvedLine extends CubicCurve {
             Vector2D A = new Vector2D(startXProperty().getValue(),startYProperty().getValue());
             Vector2D B = new Vector2D(endXProperty().getValue(),endYProperty().getValue());
 
-            Vector2D direcao = A.subtract(B);
+            Vector2D direction = A.subtract(B);
 
-            Double distancia = (new Vector2D(1,0)).dotProduct(direcao);
+            Double distance = (new Vector2D(1,0)).dotProduct(direction);
             
-            if(direcao.equals(Vector2D.ZERO) || distancia == 0)
+            if(direction.equals(Vector2D.ZERO) || distance == 0)
                 return B;
             
-            direcao = new Vector2D(1,0).scalarMultiply(distancia).normalize();
+            direction = new Vector2D(1,0).scalarMultiply(distance).normalize();
 
-            direcao = direcao.scalarMultiply(distancia/2);
+            direction = direction.scalarMultiply(distance/2);
 
-            Double x = direcao.getX() + endXProperty().getValue();
-            Double y = direcao.getY() + endYProperty().getValue();
+            Double x = direction.getX() + endXProperty().getValue();
+            Double y = direction.getY() + endYProperty().getValue();
 
             return new Vector2D(x,y);
         

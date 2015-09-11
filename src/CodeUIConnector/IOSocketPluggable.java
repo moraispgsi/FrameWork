@@ -5,13 +5,16 @@
  */
 package CodeUIConnector;
 
-import java.util.Set;
 import javafx.collections.ObservableSet;
 
 public interface IOSocketPluggable {
     
-    public ObservableSet<UIVariableInputSocket> getInputSockets();
+    public ObservableSet<VariableInputSocket> getInputSockets();
 
-    public ObservableSet<UIVariableOutputSocket> getOutputSockets();
+    public ObservableSet<VariableOutputSocket> getOutputSockets();
+    
+    public ObservableSet<UIInputCallSocket> getInputCallSockets();
+    
+    public ObservableSet<UIOutputCallSocket> getOutputCallSockets();
     
 }

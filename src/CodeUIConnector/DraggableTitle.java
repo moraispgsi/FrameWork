@@ -16,18 +16,15 @@ public class DraggableTitle extends StackPane {
     final Delta dragDelta = new Delta();
     
     private final Label titleLabel = new Label();
-    private final DoubleProperty xProperty;
-    private final DoubleProperty yProperty;
+    
 
     public DraggableTitle(String title,DoubleProperty xProperty,DoubleProperty yProperty) {
         
         titleLabel.setText(title);
-        
-        this.xProperty = xProperty;
-        this.yProperty = yProperty;
-        
+
         getChildren().add(titleLabel);
-        setStyle("-fx-padding: 5;-fx-background-color: #73BFD9;");
+        
+        setStyle("-fx-padding: 5;");
         
         setOnMousePressed(e->{
             

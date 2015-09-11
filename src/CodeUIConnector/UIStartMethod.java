@@ -7,35 +7,24 @@ package CodeUIConnector;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import javafx.collections.ObservableSet;
 
 
-public class UIStartMethod extends IOSocketPane implements IOSocketPluggable{
-    
-    private final IOSocketSet socketSet = new IOSocketSet();
-    
+public class UIStartMethod extends IOSocketPane {
+
     public UIStartMethod(String classFileUrl,Method method) {
         super(method.getName() + " Start");
         
         
+        UIOutputCallSocket callOutputSocket = new UIOutputCallSocket("Next");
+        addOutputCallSocket(callOutputSocket);
+        
         for(Parameter param : method.getParameters()){
 
-            UIVariableOutputSocket socket = new UIVariableOutputSocket(param.getType(),addOutput(param.getName()+":"+param.getType().getSimpleName()));
-            socketSet.getOutputSockets().add(socket);
-
+            VariableOutputSocket socket = new VariableOutputSocket(param.getType(),param.getName()+":"+param.getType().getSimpleName());
+            addOutputSocket(socket);
+            
         }
 
     }
 
-    @Override
-    public ObservableSet<UIVariableInputSocket> getInputSockets() {
-        return socketSet.getInputSockets();
-    }
-
-    @Override
-    public ObservableSet<UIVariableOutputSocket> getOutputSockets() {
-        return socketSet.getOutputSockets();
-    }
-    
-    
 }

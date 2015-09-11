@@ -11,17 +11,29 @@ import javafx.collections.ObservableSet;
 
 public class IOSocketSet implements IOSocketPluggable{
     
-    private final ObservableSet<UIVariableInputSocket> inputSockets =  FXCollections.observableSet();
-    private final ObservableSet<UIVariableOutputSocket> outputSockets = FXCollections.observableSet();
+    private final ObservableSet<VariableInputSocket> inputSockets =  FXCollections.observableSet();
+    private final ObservableSet<VariableOutputSocket> outputSockets = FXCollections.observableSet();
+    private final ObservableSet<UIInputCallSocket> inputCallSockets =  FXCollections.observableSet();
+    private final ObservableSet<UIOutputCallSocket> outputCallSockets = FXCollections.observableSet();
 
     @Override
-    public ObservableSet<UIVariableInputSocket> getInputSockets() {
+    public ObservableSet<VariableInputSocket> getInputSockets() {
         return inputSockets;
     }
 
     @Override
-    public ObservableSet<UIVariableOutputSocket> getOutputSockets() {
+    public ObservableSet<VariableOutputSocket> getOutputSockets() {
         return outputSockets;
     }
+    
+    public ObservableSet<UIInputCallSocket> getInputCallSockets() {
+        return inputCallSockets;
+    }
+
+    public ObservableSet<UIOutputCallSocket> getOutputCallSockets() {
+        return outputCallSockets;
+    }
+    
+    
     
 }

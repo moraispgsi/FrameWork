@@ -15,13 +15,23 @@ public class UISocketCanvasSet implements IOSocketPluggable {
 
 
     @Override
-    public ObservableSet<UIVariableInputSocket> getInputSockets() {
+    public ObservableSet<VariableInputSocket> getInputSockets() {
         return socketSet.getInputSockets();
     }
 
     @Override
-    public ObservableSet<UIVariableOutputSocket> getOutputSockets() {
+    public ObservableSet<VariableOutputSocket> getOutputSockets() {
         return socketSet.getOutputSockets();
+    }
+    
+    @Override
+    public ObservableSet<UIInputCallSocket> getInputCallSockets() {
+        return socketSet.getInputCallSockets();
+    }
+
+    @Override
+    public ObservableSet<UIOutputCallSocket> getOutputCallSockets() {
+        return socketSet.getOutputCallSockets();
     }
 
 }

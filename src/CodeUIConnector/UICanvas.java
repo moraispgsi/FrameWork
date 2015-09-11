@@ -7,7 +7,6 @@ package CodeUIConnector;
 
 
 
-import java.io.File;
 import java.lang.reflect.Method;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
@@ -24,27 +23,27 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 
 
-public class UICanvas extends Region {
+public class UICanvas extends Region{
     
     private final UISocketCanvasSet socketSet = new UISocketCanvasSet();
     private String filePath;
     private Method method;
     private ObjectProperty<Point2D> sceneBoundsProperty = new SimpleObjectProperty<>();
     
-    private UIVariableOutputSocket draggingSocket;
+    private VariableOutputSocket draggingSocket;
     
     public UICanvas(String filePath, Method method) {
         this.filePath = filePath;
         this.method = method;
         
         socketSet.getInputSockets()
-                .addListener((SetChangeListener.Change<? extends UIVariableInputSocket> change) -> {
+                .addListener((SetChangeListener.Change<? extends VariableInputSocket> change) -> {
                     
                     addInputSocketListener(change);
                 });
         
         socketSet.getOutputSockets()
-                .addListener((SetChangeListener.Change<? extends UIVariableOutputSocket> change) -> {
+                .addListener((SetChangeListener.Change<? extends VariableOutputSocket> change) -> {
 
                     addOutputSocketListener(change);
                 });
@@ -62,8 +61,24 @@ public class UICanvas extends Region {
         UIStartMethod startUI = new UIStartMethod(filePath,method);
         getChildren().add(startUI);
         
+        /*
         File file = new File(filePath);
         
+       
+            
+        String template;
+        try (Scanner scanner = new Scanner(file)) {
+            template = scanner.useDelimiter("\\Z").next();
+            
+            
+            
+            
+            
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(UICanvas.class.getName()).log(Level.SEVERE, null, ex);
+        }
+            
+       */
         
         
         
@@ -75,7 +90,7 @@ public class UICanvas extends Region {
         }
     }
 
-    private void addInputSocketListener(SetChangeListener.Change<? extends UIVariableInputSocket> change) {
+    private void addInputSocketListener(SetChangeListener.Change<? extends VariableInputSocket> change) {
 
         if (change.wasAdded()) {
             
@@ -194,7 +209,7 @@ public class UICanvas extends Region {
 
     }
 
-    private void addOutputSocketListener(SetChangeListener.Change<? extends UIVariableOutputSocket> change) {
+    private void addOutputSocketListener(SetChangeListener.Change<? extends VariableOutputSocket> change) {
 
       
         if (change.wasAdded()) {

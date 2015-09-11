@@ -7,22 +7,9 @@ package CodeUIConnector;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
-import java.util.Set;
-import javafx.collections.ObservableSet;
-import javafx.geometry.Pos;
-import javafx.scene.Cursor;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.StackPane;
-import javafx.scene.layout.VBox;
 
-public class UIMethod extends IOSocketPane implements IOSocketPluggable{
-    
-    private final IOSocketSet socketSet = new IOSocketSet();
+public class UIMethod extends IOSocketPane{
 
-    
     public Method method;
     public String classFileUrl;
 
@@ -35,9 +22,9 @@ public class UIMethod extends IOSocketPane implements IOSocketPluggable{
 
         for(Parameter param : method.getParameters()){
 
-            UIVariableInputSocket socket = new UIVariableInputSocket(param.getType(),addInput(param.getName()+":"+param.getType().getSimpleName()));
-            socketSet.getInputSockets().add(socket);
-            
+            VariableInputSocket socket = new VariableInputSocket(param.getType(),param.getName()+":"+param.getType().getSimpleName());
+            addInputSocket(socket);
+ 
         }
      
         
@@ -45,23 +32,11 @@ public class UIMethod extends IOSocketPane implements IOSocketPluggable{
         
         if(!method.getReturnType().equals(Void.TYPE)){
             
-            UIVariableOutputSocket socket = new UIVariableOutputSocket(returnType,addOutput(returnType.getSimpleName()));
-            
-            socketSet.getOutputSockets().add(socket);
+            VariableOutputSocket socket = new VariableOutputSocket(returnType,returnType.getSimpleName());
+            addOutputSocket(socket);
 
-            
         }
 
-    }
-    
-    @Override
-    public ObservableSet<UIVariableInputSocket> getInputSockets() {
-        return socketSet.getInputSockets();
-    }
-
-    @Override
-    public ObservableSet<UIVariableOutputSocket> getOutputSockets() {
-        return socketSet.getOutputSockets();
     }
 
 }

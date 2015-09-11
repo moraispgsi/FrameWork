@@ -6,14 +6,14 @@
 package CodeUIConnector;
 
 
-public class UIVariableOutputSocket implements Socket {
+public class VariableOutputSocket implements Socket {
 
     private final Class<?> variableType;
     private final UISocket uiSocket;
 
-    public UIVariableOutputSocket(Class<?> variableType, UISocket uiSocket) {
+    public VariableOutputSocket(Class<?> variableType, String name) {
         this.variableType = variableType;
-        this.uiSocket = uiSocket;
+        this.uiSocket = new UIVariableSocket(UIVariableSocket.Type.OUTPUT,5,name);
     }
     
     @Override
