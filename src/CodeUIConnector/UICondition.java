@@ -6,11 +6,17 @@
 package CodeUIConnector;
 
 
-public class UICondition extends IOSocketPane{
+public class UICondition extends UISocketPane{
     
 
     public UICondition() {
         super("Condition");
+        
+        OutputCallSocket callOutputSocket = new OutputCallSocket("Next");
+        addOutputCallSocket(callOutputSocket);
+        
+        InputCallSocket callInputSocket = new InputCallSocket();
+        addInputCallSocket(callInputSocket);
         
         VariableInputSocket socket = new VariableInputSocket(Boolean.class,"Condition");
         addInputSocket(socket);

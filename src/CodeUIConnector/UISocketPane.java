@@ -13,7 +13,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-public class IOSocketPane extends Region implements IOSocketPluggable {
+public class UISocketPane extends Region implements IOSocketPluggable {
     
     private final IOSocketSet socketSet = new IOSocketSet();
     
@@ -29,7 +29,7 @@ public class IOSocketPane extends Region implements IOSocketPluggable {
     
      
 
-    public IOSocketPane(String title) {
+    public UISocketPane(String title) {
   
 
         titleBar = new DraggableTitle(title,layoutXProperty(),layoutYProperty());
@@ -42,6 +42,7 @@ public class IOSocketPane extends Region implements IOSocketPluggable {
         rootBorderPane.setTop(titleBar);
         rootBorderPane.setCenter(centerVBox);
         
+        
         outputSocketCallVBox.setAlignment(Pos.CENTER_RIGHT);
         outputSocketVBox.setAlignment(Pos.CENTER_RIGHT);
         inputSocketCallVBox.setAlignment(Pos.CENTER_LEFT);
@@ -49,11 +50,9 @@ public class IOSocketPane extends Region implements IOSocketPluggable {
         
         outputSocketVBox.getChildren().add(outputSocketCallVBox);
         inputSocketVBox.getChildren().add(inputSocketCallVBox);
-
+        
         inputSocketVBox.setStyle("-fx-padding: 5;-fx-background-color:  rgba(255, 255, 255, .7);");
         outputSocketVBox.setStyle("-fx-padding: 5;-fx-background-color: rgba(255, 255, 255, .7);");
-        inputSocketCallVBox.setStyle("-fx-background-color:  rgba(255, 255, 255, .7);");
-        outputSocketCallVBox.setStyle("-fx-background-color: rgba(255, 255, 255, .7);");
         
         rootBorderPane.setLeft(inputSocketVBox);
         rootBorderPane.setRight(outputSocketVBox);
@@ -67,31 +66,31 @@ public class IOSocketPane extends Region implements IOSocketPluggable {
         
         removeInputSocket(socket);
         inputSocketVBox.getChildren().add(socket.getUISocket());
-        getInputSockets().add(socket);
+        getVariableInputSockets().add(socket);
 
     }
     
     public void removeInputSocket(VariableInputSocket socket){
 
         inputSocketVBox.getChildren().remove(socket.getUISocket());
-        getInputSockets().remove(socket);
+        getVariableInputSockets().remove(socket);
     }
     
     public void addOutputSocket(VariableOutputSocket socket){
         
         removeOutputSocket(socket);
         outputSocketVBox.getChildren().add(socket.getUISocket());
-        getOutputSockets().add(socket);
+        getVariableOutputSockets().add(socket);
 
     }
     public void removeOutputSocket(VariableOutputSocket socket){
 
         outputSocketVBox.getChildren().remove(socket.getUISocket());
-        getOutputSockets().remove(socket);
+        getVariableOutputSockets().remove(socket);
 
     }
     
-    public void addInputCallSocket(UIInputCallSocket socket){
+    public void addInputCallSocket(InputCallSocket socket){
         
         removeInputCallSocket(socket);
         inputSocketCallVBox.getChildren().add((Node)socket.getUISocket());
@@ -99,20 +98,20 @@ public class IOSocketPane extends Region implements IOSocketPluggable {
 
     }
     
-    public void removeInputCallSocket(UIInputCallSocket socket){
+    public void removeInputCallSocket(InputCallSocket socket){
 
         inputSocketCallVBox.getChildren().remove(socket.getUISocket());
         getInputCallSockets().remove(socket);
     }
     
-    public void addOutputCallSocket(UIOutputCallSocket socket){
+    public void addOutputCallSocket(OutputCallSocket socket){
         
         removeOutputCallSocket(socket);
         outputSocketCallVBox.getChildren().add(socket.getUISocket());
         getOutputCallSockets().add(socket);
 
     }
-    public void removeOutputCallSocket(UIOutputCallSocket socket){
+    public void removeOutputCallSocket(OutputCallSocket socket){
 
         outputSocketCallVBox.getChildren().remove(socket.getUISocket());
         getOutputCallSockets().remove(socket);
@@ -121,22 +120,22 @@ public class IOSocketPane extends Region implements IOSocketPluggable {
     
     
     @Override
-    public ObservableSet<VariableInputSocket> getInputSockets() {
-        return socketSet.getInputSockets();
+    public ObservableSet<VariableInputSocket> getVariableInputSockets() {
+        return socketSet.getVariableInputSockets();
     }
 
     @Override
-    public ObservableSet<VariableOutputSocket> getOutputSockets() {
-        return socketSet.getOutputSockets();
+    public ObservableSet<VariableOutputSocket> getVariableOutputSockets() {
+        return socketSet.getVariableOutputSockets();
     }
     
     @Override
-    public ObservableSet<UIInputCallSocket> getInputCallSockets() {
+    public ObservableSet<InputCallSocket> getInputCallSockets() {
         return socketSet.getInputCallSockets();
     }
 
     @Override
-    public ObservableSet<UIOutputCallSocket> getOutputCallSockets() {
+    public ObservableSet<OutputCallSocket> getOutputCallSockets() {
         return socketSet.getOutputCallSockets();
     }
     

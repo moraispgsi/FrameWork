@@ -9,7 +9,7 @@ import java.lang.reflect.Method;
 
 
 
-public class UIEndMethod extends IOSocketPane implements IOSocketPluggable{
+public class UIEndMethod extends UISocketPane implements IOSocketPluggable{
     
 
     public UIEndMethod(String classFileUrl,Method method) {
@@ -21,7 +21,7 @@ public class UIEndMethod extends IOSocketPane implements IOSocketPluggable{
         
         if(!returnType.equals(Void.TYPE)){
             
-            UIInputCallSocket callInputSocket = new UIInputCallSocket();
+            InputCallSocket callInputSocket = new InputCallSocket();
             addInputCallSocket(callInputSocket);
         
             VariableInputSocket socket = new VariableInputSocket(returnType,returnType.getSimpleName());

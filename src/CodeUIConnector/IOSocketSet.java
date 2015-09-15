@@ -13,24 +13,26 @@ public class IOSocketSet implements IOSocketPluggable{
     
     private final ObservableSet<VariableInputSocket> inputSockets =  FXCollections.observableSet();
     private final ObservableSet<VariableOutputSocket> outputSockets = FXCollections.observableSet();
-    private final ObservableSet<UIInputCallSocket> inputCallSockets =  FXCollections.observableSet();
-    private final ObservableSet<UIOutputCallSocket> outputCallSockets = FXCollections.observableSet();
+    private final ObservableSet<InputCallSocket> inputCallSockets =  FXCollections.observableSet();
+    private final ObservableSet<OutputCallSocket> outputCallSockets = FXCollections.observableSet();
 
     @Override
-    public ObservableSet<VariableInputSocket> getInputSockets() {
+    public ObservableSet<VariableInputSocket> getVariableInputSockets() {
         return inputSockets;
     }
 
     @Override
-    public ObservableSet<VariableOutputSocket> getOutputSockets() {
+    public ObservableSet<VariableOutputSocket> getVariableOutputSockets() {
         return outputSockets;
     }
     
-    public ObservableSet<UIInputCallSocket> getInputCallSockets() {
+    @Override
+    public ObservableSet<InputCallSocket> getInputCallSockets() {
         return inputCallSockets;
     }
 
-    public ObservableSet<UIOutputCallSocket> getOutputCallSockets() {
+    @Override
+    public ObservableSet<OutputCallSocket> getOutputCallSockets() {
         return outputCallSockets;
     }
     

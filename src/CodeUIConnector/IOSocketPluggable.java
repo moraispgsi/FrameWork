@@ -9,12 +9,12 @@ import javafx.collections.ObservableSet;
 
 public interface IOSocketPluggable {
     
-    public ObservableSet<VariableInputSocket> getInputSockets();
+    public ObservableSet<VariableInputSocket> getVariableInputSockets();
 
-    public ObservableSet<VariableOutputSocket> getOutputSockets();
+    public ObservableSet<VariableOutputSocket> getVariableOutputSockets();
     
-    public ObservableSet<UIInputCallSocket> getInputCallSockets();
+    public ObservableSet<InputCallSocket> getInputCallSockets();
     
-    public ObservableSet<UIOutputCallSocket> getOutputCallSockets();
+    public ObservableSet<OutputCallSocket> getOutputCallSockets();
     
 }

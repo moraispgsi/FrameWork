@@ -11,6 +11,8 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.HashMap;
+import java.util.Map;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
@@ -20,7 +22,51 @@ import javax.tools.ToolProvider;
  * @author Ricardo José Horta Morais
  */
 public class DynamicClassUtils {
+    
+    
+    
 
+    private static final Map<Class<?>, Class<?>> PRIMITIVES_TO_WRAPPERS = new HashMap<>();
+    private static final Map<Class<?>, Class<?>> WRAPPERS_TO_PRIMITIVES = new HashMap<>();
+
+    static {
+
+        PRIMITIVES_TO_WRAPPERS.put(boolean.class, Boolean.class);
+        PRIMITIVES_TO_WRAPPERS.put(byte.class, Byte.class);
+        PRIMITIVES_TO_WRAPPERS.put(char.class, Character.class);
+        PRIMITIVES_TO_WRAPPERS.put(double.class, Double.class);
+        PRIMITIVES_TO_WRAPPERS.put(float.class, Float.class);
+        PRIMITIVES_TO_WRAPPERS.put(int.class, Integer.class);
+        PRIMITIVES_TO_WRAPPERS.put(long.class, Long.class);
+        PRIMITIVES_TO_WRAPPERS.put(short.class, Short.class);
+        PRIMITIVES_TO_WRAPPERS.put(void.class, Void.class);
+
+        WRAPPERS_TO_PRIMITIVES.put(Boolean.class, boolean.class);
+        WRAPPERS_TO_PRIMITIVES.put(Byte.class, byte.class);
+        WRAPPERS_TO_PRIMITIVES.put(Character.class, char.class);
+        WRAPPERS_TO_PRIMITIVES.put(Double.class, double.class);
+        WRAPPERS_TO_PRIMITIVES.put(Float.class, float.class);
+        WRAPPERS_TO_PRIMITIVES.put(Integer.class, int.class);
+        WRAPPERS_TO_PRIMITIVES.put(Long.class, long.class);
+        WRAPPERS_TO_PRIMITIVES.put(Short.class, short.class);
+        WRAPPERS_TO_PRIMITIVES.put(Void.class, void.class);
+
+    }     
+    
+    
+    // safe because both Long.class and long.class are of type Class<Long>
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T> primitiveToWrapper(Class<T> c) {
+      return c.isPrimitive() ? (Class<T>) PRIMITIVES_TO_WRAPPERS.get(c) : c;
+    }
+    
+    // safe because both Long.class and long.class are of type Class<Long>
+    @SuppressWarnings("unchecked")
+    public static <T> Class<T> wrapperToPrimitive(Class<T> c) {
+      return c.isPrimitive() ?   c: (Class<T>)WRAPPERS_TO_PRIMITIVES.get(c);
+    }
+    
+    
     /**
      * Compiles a source file and return a class file
      * @param sourceFile source file to compile
@@ -80,5 +126,6 @@ public class DynamicClassUtils {
         Class<?> cls = Class.forName(file.getParentFile().getName() + "." + fileName, true, classLoader);
         return cls;
     }
+
 
 }

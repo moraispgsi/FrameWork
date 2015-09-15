@@ -7,16 +7,23 @@ package CodeUIConnector;
 
 
 
+import DynamicClassUtils.DynamicClassUtils;
 import java.lang.reflect.Method;
-import javafx.beans.binding.DoubleBinding;
+import java.util.HashMap;
+import java.util.Map;
+import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.ListChangeListener;
 import javafx.collections.SetChangeListener;
 import javafx.geometry.Point2D;
+import javafx.scene.Cursor;
 import javafx.scene.Node;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import javafx.scene.input.MouseDragEvent;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
@@ -26,23 +33,50 @@ import javafx.scene.shape.StrokeLineCap;
 public class UICanvas extends Region{
     
     private final UISocketCanvasSet socketSet = new UISocketCanvasSet();
+    private final Map<VariableInputSocket,UISocketIOLine> lineMap = new HashMap<>();
+    
     private String filePath;
     private Method method;
+    
     private ObjectProperty<Point2D> sceneBoundsProperty = new SimpleObjectProperty<>();
     
+    
     private VariableOutputSocket draggingSocket;
+    private HorizontalCurvedLine draggingLine;
+    
+    private final Double mouseHOffset = 10d;
+    private final Double mouseVOffset = 10d;
+    private final DoubleProperty mouseX = new SimpleDoubleProperty();
+    private final DoubleProperty mouseY = new SimpleDoubleProperty();
+    
     
     public UICanvas(String filePath, Method method) {
         this.filePath = filePath;
         this.method = method;
         
-        socketSet.getInputSockets()
+        this.setCursor(Cursor.OPEN_HAND);
+        
+        setOnMouseDragOver(e->{
+            
+            mouseX.set(mouseHOffset + e.getX());
+            mouseY.set(mouseVOffset + e.getY());    
+            
+        });
+        
+        setOnMouseMoved(e->{
+            
+            mouseX.set(mouseHOffset + e.getX());
+            mouseY.set(mouseVOffset + e.getY());   
+            
+        });
+        
+        socketSet.getVariableInputSockets()
                 .addListener((SetChangeListener.Change<? extends VariableInputSocket> change) -> {
                     
                     addInputSocketListener(change);
                 });
         
-        socketSet.getOutputSockets()
+        socketSet.getVariableOutputSockets()
                 .addListener((SetChangeListener.Change<? extends VariableOutputSocket> change) -> {
 
                     addOutputSocketListener(change);
@@ -61,25 +95,8 @@ public class UICanvas extends Region{
         UIStartMethod startUI = new UIStartMethod(filePath,method);
         getChildren().add(startUI);
         
-        /*
-        File file = new File(filePath);
-        
-       
-            
-        String template;
-        try (Scanner scanner = new Scanner(file)) {
-            template = scanner.useDelimiter("\\Z").next();
-            
-            
-            
-            
-            
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(UICanvas.class.getName()).log(Level.SEVERE, null, ex);
-        }
-            
-       */
-        
+        UICondition coditionUI = new UICondition();
+        getChildren().add(coditionUI);
         
         
         if(!method.getReturnType().equals(Void.TYPE)){
@@ -90,120 +107,102 @@ public class UICanvas extends Region{
         }
     }
 
+
     private void addInputSocketListener(SetChangeListener.Change<? extends VariableInputSocket> change) {
 
         if (change.wasAdded()) {
             
-            change.getElementAdded().getUISocket().setOnDragOver(e->{
+            VariableInputSocket variableInputSocket = change.getElementAdded();
+            
+            variableInputSocket.getUISocket().addEventHandler(MouseDragEvent.MOUSE_DRAG_ENTERED,e->{
                 
-                if (draggingSocket == null || 
-                        !change.getElementAdded().getVariableType().equals(draggingSocket.getVariableType()))
+                
+                if (draggingSocket == null || !DynamicClassUtils.primitiveToWrapper(variableInputSocket.getVariableType())
+                        .isAssignableFrom(DynamicClassUtils.primitiveToWrapper(draggingSocket.getVariableType())))
+  
                     return;
+                
+                UISocket inputUISocket = variableInputSocket.getUISocket();
+                UISocket outputUISocket = draggingSocket.getUISocket();
+                boolean containsKey = lineMap.containsKey(variableInputSocket);
+                boolean changed = containsKey &&  !(lineMap.get(variableInputSocket).getOutputSocket() == outputUISocket);
+
+                if(changed){
                     
-                e.acceptTransferModes(TransferMode.ANY);
-                e.consume();
+                    lineMap.get(variableInputSocket).getStrokeDashArray().addAll(2d, 10d);
+                    
+                }
+                
+                draggingLine.bindRightSocket(sceneBoundsProperty, inputUISocket);
+                
+
             });
             
-            change.getElementAdded().getUISocket().setOnDragDropped(e -> {
-
-                if (draggingSocket == null || 
-                        !change.getElementAdded().getVariableType().equals(draggingSocket.getVariableType()))
+            
+            
+            
+            variableInputSocket.getUISocket().addEventHandler(MouseDragEvent.MOUSE_DRAG_EXITED,e->{
+            
+                if (draggingSocket == null || !DynamicClassUtils.primitiveToWrapper(variableInputSocket.getVariableType())
+                        .isAssignableFrom(DynamicClassUtils.primitiveToWrapper(draggingSocket.getVariableType())))
+  
                     return;
+                
+                UISocket inputUISocket = variableInputSocket.getUISocket();
+                UISocket outputUISocket = draggingSocket.getUISocket();
+                boolean containsKey = lineMap.containsKey(variableInputSocket);
+                boolean changed = containsKey &&  !(lineMap.get(variableInputSocket).getOutputSocket() == outputUISocket);
+                
+                if(changed){
                     
-                UISocket inputUISocket = change.getElementAdded().getUISocket();
+                    lineMap.get(variableInputSocket).getStrokeDashArray().clear();
+  
+                }
+                
+                draggingLine.startXProperty().bind(mouseX);
+                draggingLine.startYProperty().bind(mouseY);
+                
+            });
+            
+            variableInputSocket.getUISocket().addEventHandler(MouseDragEvent.MOUSE_DRAG_RELEASED,e -> {
+
+            
+                if (draggingSocket == null || !DynamicClassUtils.primitiveToWrapper(variableInputSocket.getVariableType())
+                        .isAssignableFrom(DynamicClassUtils.primitiveToWrapper(draggingSocket.getVariableType())))
+                    return;
+
+                UISocket inputUISocket = variableInputSocket.getUISocket();
                 UISocket outputUISocket = draggingSocket.getUISocket();
 
-                change.getElementAdded().setOutputSource(draggingSocket);
 
-                DoubleBinding startX = new DoubleBinding(){
+                boolean containsKey = lineMap.containsKey(variableInputSocket);
+                boolean changed = containsKey &&  !(lineMap.get(variableInputSocket).getOutputSocket() == outputUISocket);
+                
+                if(changed){
+                    variableInputSocket.getOutputSource().getUISocket().showIdle();
+                    this.getChildren().remove(lineMap.get(variableInputSocket));
+                }
+                /* The line could be reused in a future version*/
+                if(!containsKey || changed){
 
-                    {
-                        bind(sceneBoundsProperty,inputUISocket.getPlugBoundsProperty());
-                    }
-
-                    @Override
-                    protected double computeValue() {
-                        double socketMax = inputUISocket.getPlugBoundsProperty().getValue().getMaxX();
-                        double socketMin = inputUISocket.getPlugBoundsProperty().getValue().getMinX();
-                        double center = socketMin + (socketMax - socketMin)/2;
-
-
-                        return center - sceneBoundsProperty.getValue().getX();
-
-                    }
-
-                };
-
-                DoubleBinding startY = new DoubleBinding(){
-
-                    {
-                        bind(sceneBoundsProperty,inputUISocket.getPlugBoundsProperty());
-                    }
-
-                    @Override
-                    protected double computeValue() {
-                        double socketMax = inputUISocket.getPlugBoundsProperty().getValue().getMaxY();
-                        double socketMin = inputUISocket.getPlugBoundsProperty().getValue().getMinY();
-                        double center = socketMin + (socketMax - socketMin)/2;
-
-                        return center - sceneBoundsProperty.getValue().getY();
-                    }
-
-                };
-
-                DoubleBinding endX = new DoubleBinding(){
-
-                    {
-                        bind(sceneBoundsProperty,outputUISocket.getPlugBoundsProperty());
-                    }
-
-                    @Override
-                    protected double computeValue() {
-
-                        double socketMax = outputUISocket.getPlugBoundsProperty().getValue().getMaxX();
-                        double socketMin = outputUISocket.getPlugBoundsProperty().getValue().getMinX();
-                        double center = socketMin + (socketMax - socketMin)/2;
-
-                        return center - sceneBoundsProperty.getValue().getX();
-                    }
-
-                };
-
-                DoubleBinding endY = new DoubleBinding(){
-
-                    {
-                        bind(sceneBoundsProperty,outputUISocket.getPlugBoundsProperty());
-                    }
-
-                    @Override
-                    protected double computeValue() {
-                        double socketMax = outputUISocket.getPlugBoundsProperty().getValue().getMaxY();
-                        double socketMin = outputUISocket.getPlugBoundsProperty().getValue().getMinY();
-                        double center = socketMin + (socketMax - socketMin)/2;
-
-                        return center - sceneBoundsProperty.getValue().getY();
-                    }
-
-                };
-
-                HorizontalCurvedLine line = new HorizontalCurvedLine();
-                line.startXProperty().bind(startX);
-                line.startYProperty().bind(startY);
-                line.endXProperty().bind(endX);
-                line.endYProperty().bind(endY);
-                line.setStroke(Color.LIGHTBLUE);
-                line.setStrokeWidth(2);
-                line.setStrokeLineCap(StrokeLineCap.ROUND);
-                line.setFill(new Color(0, 0,0, 0));
-
-                this.getChildren().addAll(line);
-
-                e.consume();
-
+                    UISocketIOLine line = new UISocketIOLine(sceneBoundsProperty,inputUISocket,outputUISocket);
+                    line.setStroke(Color.LIGHTBLUE);
+                    line.setStrokeWidth(2);
+                    line.setStrokeLineCap(StrokeLineCap.ROUND);
+                    line.setFill(new Color(0, 0,0, 0));
+                    
+                    lineMap.put(variableInputSocket, line);
+                    this.getChildren().addAll(line);
+                    
+                    
+                }
+                System.out.println("HERE1");
+                
+                variableInputSocket.setOutputSource(draggingSocket);
+                
+                
 
             });
-
-            
 
         }
 
@@ -213,44 +212,70 @@ public class UICanvas extends Region{
 
       
         if (change.wasAdded()) {
+            
+            change.getElementAdded().getUISocket().addEventHandler(MouseEvent.MOUSE_PRESSED, e->{
+                this.setCursor(Cursor.CLOSED_HAND);
+            });
+           
 
-            change.getElementAdded().getUISocket().setOnDragDetected(e -> {
-
-               
+            change.getElementAdded().getUISocket().addEventHandler(MouseDragEvent.DRAG_DETECTED,e -> {
+                    
+                
                 draggingSocket = change.getElementAdded();
-
-                Dragboard db = change.getElementAdded().getUISocket().startDragAndDrop(TransferMode.ANY);
-                
-                ClipboardContent content = new ClipboardContent();
-                content.putString("");
-                db.setContent(content);
+                draggingSocket.getUISocket().startFullDrag();
+                this.setCursor(Cursor.CLOSED_HAND);
                 
                 
-                 socketSet
-                         .getInputSockets()
-                         .stream()
-                         .filter(socket -> socket.getVariableType().equals(change.getElementAdded().getVariableType()))
-                         .forEach(socket -> {socket.getUISocket().setAvailable();});
                 
-                        
-                e.consume();
+                HorizontalCurvedLine line = new HorizontalCurvedLine();
+                line.bindLeftSocket(sceneBoundsProperty,draggingSocket.getUISocket());
+                line.setStroke(Color.LIGHTGREEN);
+                line.setStrokeWidth(1);
+                line.setStrokeLineCap(StrokeLineCap.ROUND);
+                line.setFill(new Color(0, 0,0, 0));
+                line.setDisable(true);
+                line.startXProperty().bind(mouseX);
+                line.startYProperty().bind(mouseY);
+                
+                draggingLine = line;
+                getChildren().add(line);
+                
+                socketSet.findAvailableInputSockets(change.getElementAdded().getVariableType());
+                       
+                
 
             });
             
-            change.getElementAdded().getUISocket().setOnDragDone(e -> {
+            change.getElementAdded().getUISocket().addEventHandler(MouseEvent.MOUSE_ENTERED, e->{
             
-                    socketSet
-                         .getInputSockets()
-                         .stream()
-                         .filter(socket -> socket.getVariableType().equals(change.getElementAdded().getVariableType()))
-                         .forEach(socket -> {
-                             if(socket.getOutputSource() == null)
-                                socket.getUISocket().setIdle();
-                             else
-                                socket.getUISocket().setConnected();
-                         });
+                this.setCursor(Cursor.OPEN_HAND);
+                change.getElementAdded().getUISocket().showAvailable();
+            });
+            
+            change.getElementAdded().getUISocket().addEventHandler(MouseEvent.MOUSE_EXITED, e->{
+                
+                if(draggingSocket == null){
+
+                    socketSet.makeOutputSocketUnavailable(change.getElementAdded());
+                }
                     
-                    e.consume();
+            });
+            
+            
+            change.getElementAdded().getUISocket().addEventHandler(MouseDragEvent.MOUSE_RELEASED, e -> {
+            
+                
+                socketSet.makeInputSocketUnavailable();
+                
+                if(draggingSocket != null)
+                    socketSet.makeOutputSocketUnavailable(draggingSocket);
+                
+                this.setCursor(Cursor.OPEN_HAND);
+   
+                draggingSocket = null;
+                getChildren().remove(draggingLine);
+                draggingLine = null;
+               
             });
 
         }
@@ -266,8 +291,8 @@ public class UICanvas extends Region{
 
                         if(node instanceof IOSocketPluggable){
                             
-                            socketSet.getInputSockets().addAll(((IOSocketPluggable)node).getInputSockets());
-                            socketSet.getOutputSockets().addAll(((IOSocketPluggable)node).getOutputSockets());
+                            socketSet.getVariableInputSockets().addAll(((IOSocketPluggable)node).getVariableInputSockets());
+                            socketSet.getVariableOutputSockets().addAll(((IOSocketPluggable)node).getVariableOutputSockets());
 
                         }
 
@@ -281,8 +306,8 @@ public class UICanvas extends Region{
 
                         if(node instanceof IOSocketPluggable){
 
-                            socketSet.getInputSockets().removeAll(((IOSocketPluggable)node).getInputSockets());
-                            socketSet.getOutputSockets().removeAll(((IOSocketPluggable)node).getOutputSockets());
+                            socketSet.getVariableInputSockets().removeAll(((IOSocketPluggable)node).getVariableInputSockets());
+                            socketSet.getVariableOutputSockets().removeAll(((IOSocketPluggable)node).getVariableOutputSockets());
 
                         }
 

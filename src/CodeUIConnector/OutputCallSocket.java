@@ -6,21 +6,23 @@
 package CodeUIConnector;
 
 
-public class UIOutputCallSocket {
+public class OutputCallSocket {
     
     private final UISocket uiSocket;
-    private UIInputCallSocket connectSocket;
+    private InputCallSocket connectSocket;
+    
+    
+    
+    public OutputCallSocket(String name) {
 
-    public UIOutputCallSocket(String name) {
-
-        this.uiSocket = new UIVariableSocket(UIVariableSocket.Type.OUTPUT,5,name);
+        this.uiSocket = new UICallSocket(UICallSocket.Type.OUTPUT,5,name);
     }
 
-    public void setConnect(UIInputCallSocket connectSocket) {
+    public void setConnect(InputCallSocket connectSocket) {
         this.connectSocket = connectSocket;
     }
 
-    public UIInputCallSocket getConnectSocket() {
+    public InputCallSocket getConnectSocket() {
         return connectSocket;
     }
 

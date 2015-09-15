@@ -7,6 +7,8 @@ package CodeUIConnector;
 
 
 import javafx.beans.binding.DoubleBinding;
+import javafx.beans.property.ObjectProperty;
+import javafx.geometry.Point2D;
 import javafx.scene.shape.CubicCurve;
 import org.apache.commons.math3.geometry.euclidean.twod.*;
 
@@ -17,10 +19,9 @@ import org.apache.commons.math3.geometry.euclidean.twod.*;
  */
 public class HorizontalCurvedLine extends CubicCurve {
 
+
     public HorizontalCurvedLine() {
         
-
-
         DoubleBinding controlX1 = new DoubleBinding(){
 
             {
@@ -83,9 +84,95 @@ public class HorizontalCurvedLine extends CubicCurve {
         
         this.controlX2Property().bind(controlX2);
         this.controlY2Property().bind(controlY2);
+        
 
     }
     
+    public void bindLeftSocket(ObjectProperty<Point2D> sceneBoundsProperty,UISocket socket){
+
+        DoubleBinding bindX = new DoubleBinding(){
+
+            {
+                bind(sceneBoundsProperty,socket.getPlugBoundsProperty());
+            }
+
+            @Override
+            protected double computeValue() {
+                double socketMax = socket.getPlugBoundsProperty().getValue().getMaxX();
+                double socketMin = socket.getPlugBoundsProperty().getValue().getMinX();
+                double center = socketMin + (socketMax - socketMin)/2;
+
+
+                return center - sceneBoundsProperty.getValue().getX();
+
+            }
+
+        };
+
+        DoubleBinding bindY = new DoubleBinding(){
+
+            {
+                bind(sceneBoundsProperty,socket.getPlugBoundsProperty());
+            }
+
+            @Override
+            protected double computeValue() {
+                double socketMax = socket.getPlugBoundsProperty().getValue().getMaxY();
+                double socketMin = socket.getPlugBoundsProperty().getValue().getMinY();
+                double center = socketMin + (socketMax - socketMin)/2;
+
+                return center - sceneBoundsProperty.getValue().getY();
+            }
+
+        };
+        
+        endXProperty().bind(bindX);
+        endYProperty().bind(bindY);
+        
+    }
+    
+    public void bindRightSocket(ObjectProperty<Point2D> sceneBoundsProperty,UISocket socket){
+
+        DoubleBinding bindX = new DoubleBinding(){
+
+            {
+                bind(sceneBoundsProperty,socket.getPlugBoundsProperty());
+            }
+
+            @Override
+            protected double computeValue() {
+                double socketMax = socket.getPlugBoundsProperty().getValue().getMaxX();
+                double socketMin = socket.getPlugBoundsProperty().getValue().getMinX();
+                double center = socketMin + (socketMax - socketMin)/2;
+
+
+                return center - sceneBoundsProperty.getValue().getX();
+
+            }
+
+        };
+
+        DoubleBinding bindY = new DoubleBinding(){
+
+            {
+                bind(sceneBoundsProperty,socket.getPlugBoundsProperty());
+            }
+
+            @Override
+            protected double computeValue() {
+                double socketMax = socket.getPlugBoundsProperty().getValue().getMaxY();
+                double socketMin = socket.getPlugBoundsProperty().getValue().getMinY();
+                double center = socketMin + (socketMax - socketMin)/2;
+
+                return center - sceneBoundsProperty.getValue().getY();
+            }
+
+        };
+        
+        startXProperty().bind(bindX);
+        startYProperty().bind(bindY);
+        
+    }
     
     protected Vector2D computeControl1() {
 
@@ -111,9 +198,7 @@ public class HorizontalCurvedLine extends CubicCurve {
             return new Vector2D(x,y);
         
    }
-        
-    
-    
+
     protected Vector2D computeControl2() {
         
 
@@ -137,8 +222,6 @@ public class HorizontalCurvedLine extends CubicCurve {
             return new Vector2D(x,y);
         
     }
-    
-   
-    
+
 
 }

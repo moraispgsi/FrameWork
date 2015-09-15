@@ -8,7 +8,7 @@ package CodeUIConnector;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
-public class UIMethod extends IOSocketPane{
+public class UIMethod extends UISocketPane{
 
     public Method method;
     public String classFileUrl;

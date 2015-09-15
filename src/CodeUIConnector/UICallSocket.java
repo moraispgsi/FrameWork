@@ -5,7 +5,6 @@
  */
 package CodeUIConnector;
 
-
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -17,30 +16,37 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-
-public class UIVariableSocket  extends UISocket{
+/**
+ *
+ * @author Morai
+ */
+public class UICallSocket  extends UISocket{
     
     public static enum Type{INPUT,OUTPUT};
     
-    private final Color COLOR_IDLE = Color.LIGHTGREY;
+    private final Color COLOR_IDLE = Color.LIGHTSTEELBLUE;
     private final Color COLOR_CONNECTED = Color.LIGHTBLUE;
     private final Color COLOR_AVAILABLE = Color.LIGHTGREEN;
-
+    
+    
     private ObjectProperty<Bounds> plugSceneBounds = new SimpleObjectProperty<>();
     private final HBox hBox = new HBox();
     private final Rectangle plug = new Rectangle();
     private final Label nameLabel = new Label();
     
-    public UIVariableSocket(Type type,double spacing,String name) {
+    public UICallSocket(Type type,double spacing,String name) {
         
-        
+
         hBox.setSpacing(spacing);
         hBox.setAlignment(Pos.CENTER);
+        
         
         nameLabel.setText(name);
         
         plug.setWidth(4);
-        plug.setHeight(20);
+        plug.setHeight(30);
+        
+        
         plug.setFill(COLOR_IDLE);
         hBox.getChildren().addAll(plug,nameLabel);
         if(type == Type.OUTPUT){
@@ -87,7 +93,5 @@ public class UIVariableSocket  extends UISocket{
         super.showIdle();
     }
 
-    
-    
 
 }

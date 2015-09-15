@@ -6,12 +6,12 @@
 package CodeUIConnector;
 
 
-public class UIInputCallSocket {
+public class InputCallSocket {
     
     private final UISocket uiSocket;
 
-    public UIInputCallSocket() {
-        this.uiSocket = new UIVariableSocket(UIVariableSocket.Type.INPUT,5,"Executar");
+    public InputCallSocket() {
+        this.uiSocket = new UICallSocket(UICallSocket.Type.INPUT,5,"Executar");
     }
 
     public UISocket getUISocket() {

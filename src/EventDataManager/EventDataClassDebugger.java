@@ -49,7 +49,7 @@ public class EventDataClassDebugger extends Stage{
         buildTreeView();
         
         
-        borderPane.setLeft(treeView);
+        //borderPane.setLeft(treeView);
         
         Scene scene = new Scene(borderPane);
         
@@ -60,7 +60,6 @@ public class EventDataClassDebugger extends Stage{
     }
     
     private void buildTreeView(){
-        
         
         Pane pane = new Pane();
         for(Method method : className.getDeclaredMethods()){

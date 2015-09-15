@@ -10,13 +10,66 @@ import javafx.geometry.Bounds;
 import javafx.scene.layout.Region;
 
 public abstract class UISocket extends Region{
-
+    
+    private Handler onConnect;
+    private Handler onAvailable;
+    private Handler onIdle;
+    
+    public enum ShowType{CONNECTED,AVAILABLE,IDLE};
+    
+    private ShowType showType = ShowType.IDLE;
+    
+    public interface Handler {
+        void handle();
+    } 
+    
     public abstract ObjectProperty<Bounds> getPlugBoundsProperty();
+    
 
-    public abstract void setAvailable();
+    public void showConnected(){
+        if(onConnect != null)
+            onConnect.handle();
+        
+        showType = ShowType.CONNECTED;
+    }
+    
+    public void showAvailable(){
+        
+        if(onAvailable != null)
+            onAvailable.handle();
+        
+        showType = ShowType.AVAILABLE;
+        
+    }
+    
+    public void showIdle(){
 
-    public abstract void setConnected();
+        if(onIdle != null)
+            onIdle.handle();
+        
+        showType = ShowType.IDLE;
+        
+    }
+    
+    public ShowType getCurrentShowType(){
+        
+        return showType;
+        
+    }
 
-    public abstract void setIdle();
+
+    public void setOnShowConnect(UISocket.Handler onConnect) {
+        this.onConnect = onConnect;
+    }
+
+    public void setOnShowAvailable(UISocket.Handler onAvailable) {
+        this.onAvailable = onAvailable;
+    }
+
+    public void setOnShowIdle(UISocket.Handler onIdle) {
+        this.onIdle = onIdle;
+    }
+    
+    
     
 }

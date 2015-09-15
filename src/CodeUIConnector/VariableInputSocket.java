@@ -36,8 +36,8 @@ public class VariableInputSocket implements Socket {
         
         this.outputSource = output;
         
-        uiSocket.setConnected(); 
-        output.getUISocket().setConnected();
+        uiSocket.showConnected(); 
+        output.getUISocket().showConnected();
     }
     
     

@@ -9,13 +9,13 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 
-public class UIStartMethod extends IOSocketPane {
+public class UIStartMethod extends UISocketPane {
 
     public UIStartMethod(String classFileUrl,Method method) {
         super(method.getName() + " Start");
         
         
-        UIOutputCallSocket callOutputSocket = new UIOutputCallSocket("Next");
+        OutputCallSocket callOutputSocket = new OutputCallSocket("Next");
         addOutputCallSocket(callOutputSocket);
         
         for(Parameter param : method.getParameters()){
