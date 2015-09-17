@@ -65,7 +65,8 @@ public class UISocketCanvasSet implements IOSocketPluggable {
             return;
         
         for(VariableInputSocket socket : socketSet.getVariableInputSockets()){
-            if(socket.getOutputSource() != null){
+            if(socket.getOutputSource() != null &&
+                    outputSocket == socket.getOutputSource()){
                 outputSocket.getUISocket().showConnected();
                 return;
             }
