@@ -11,7 +11,7 @@ import CodeUIConnector.Connectors.ParamInput;
 import CodeUIConnector.Connectors.ParamOutput;
 import javafx.collections.ObservableSet;
 
-public interface IOSocketPluggable {
+public interface Pluggable {
     
     public ObservableSet<ParamInput> getInputParams();
 

@@ -6,8 +6,8 @@
 package CodeUIConnector.SocketPane;
 
 import CodeUIConnector.DraggableTitle;
-import CodeUIConnector.SocketSets.IOSocketPluggable;
-import CodeUIConnector.SocketSets.IOSocketSet;
+import CodeUIConnector.SocketSets.Pluggable;
+import CodeUIConnector.SocketSets.SocketSet;
 import CodeUIConnector.Connectors.CallInput;
 import CodeUIConnector.Connectors.CallOutput;
 import CodeUIConnector.Connectors.ParamInput;
@@ -19,9 +19,9 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-public class UISocketPane extends Region implements IOSocketPluggable {
+public class UIElement extends Region implements Pluggable {
     
-    private final IOSocketSet socketSet = new IOSocketSet();
+    private final SocketSet socketSet = new SocketSet();
     
     private final BorderPane rootBorderPane = new BorderPane();
     private final DraggableTitle titleBar;
@@ -35,7 +35,7 @@ public class UISocketPane extends Region implements IOSocketPluggable {
     
      
 
-    public UISocketPane(String title) {
+    public UIElement(String title) {
   
 
         titleBar = new DraggableTitle(title,layoutXProperty(),layoutYProperty());

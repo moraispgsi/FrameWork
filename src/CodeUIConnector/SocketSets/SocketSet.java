@@ -13,7 +13,7 @@ import CodeUIConnector.Connectors.ParamOutput;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableSet;
 
-public class IOSocketSet implements IOSocketPluggable{
+public class SocketSet implements Pluggable{
     
     private final ObservableSet<ParamInput> inputSockets =  FXCollections.observableSet();
     private final ObservableSet<ParamOutput> outputSockets = FXCollections.observableSet();

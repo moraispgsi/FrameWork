@@ -5,7 +5,7 @@
  */
 package EventDataManager;
 
-import CodeUIConnector.UIMethodCanvas;
+import CodeUIConnector.UIMethodFlowBoard;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
@@ -70,7 +70,7 @@ public class EventDataClassDebugger extends Stage{
             
             pane.setPrefSize(500,500);
             
-            Region canvas = new UIMethodCanvas("",method);
+            Region canvas = new UIMethodFlowBoard("",method);
             canvas.setPrefSize(200,200);
             pane.getChildren().add(canvas);
 

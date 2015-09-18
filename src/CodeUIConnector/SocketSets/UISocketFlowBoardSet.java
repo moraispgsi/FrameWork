@@ -15,11 +15,11 @@ import java.util.HashSet;
 import java.util.Set;
 import javafx.collections.ObservableSet;
 
-public class UISocketCanvasSet implements IOSocketPluggable {
+public class UISocketFlowBoardSet implements Pluggable {
 
-    private final IOSocketSet socketSet = new IOSocketSet();
+    private final SocketSet socketSet = new SocketSet();
 
-    public UISocketCanvasSet() {
+    public UISocketFlowBoardSet() {
 
     }
 

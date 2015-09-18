@@ -6,6 +6,7 @@
 package CodeUIConnector.Connectors;
 
 import CodeUIConnector.SocketPane.UISocket;
+import DynamicClassUtils.DynamicClassUtils;
 
 
 public class ParamInput {
@@ -42,6 +43,21 @@ public class ParamInput {
         output.getUISocket().showConnected();
     }
     
+    public boolean isCastCompatible(ParamOutput paramOutput){
+        
+        return !DynamicClassUtils
+                .primitiveToWrapper(
+                        getVariableType()
+                )
+                .isAssignableFrom(
+                        DynamicClassUtils
+                                .primitiveToWrapper(
+                                        paramOutput.getVariableType()
+                                )
+                );
+                
+    }    
+        
     
     
 

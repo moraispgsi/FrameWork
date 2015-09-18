@@ -16,11 +16,11 @@ import java.lang.reflect.Parameter;
  *
  * @author Morais
  */
-public class UISocketPaneFactory {
+public class UIElementFactory {
     
-    public static UISocketPane createMethodCall(Method method){
+    public static UIElement createMethodCall(Method method){
         
-        UISocketPane socketPane = new UISocketPane(method.getName());
+        UIElement socketPane = new UIElement(method.getName());
 
         for(Parameter param : method.getParameters()){
 
@@ -42,9 +42,9 @@ public class UISocketPaneFactory {
         
     }
     
-    public static UISocketPane createEndMethod(Method method){
+    public static UIElement createEndMethod(Method method){
         
-        UISocketPane socketPane = new UISocketPane(method.getName()); 
+        UIElement socketPane = new UIElement(method.getName()); 
 
         Class<?> returnType = method.getReturnType();
         
@@ -62,9 +62,9 @@ public class UISocketPaneFactory {
         
     }
     
-    public static UISocketPane createStartMethod(Method method){
+    public static UIElement createStartMethod(Method method){
         
-        UISocketPane socketPane = new UISocketPane(method.getName() + " Start"); 
+        UIElement socketPane = new UIElement(method.getName() + " Start"); 
     
         CallOutput callOutputSocket = new CallOutput("Next");
         socketPane.addCallOutput(callOutputSocket);
@@ -80,9 +80,9 @@ public class UISocketPaneFactory {
         
     }
     
-    public static UISocketPane createCondition(){
+    public static UIElement createCondition(){
         
-        UISocketPane socketPane = new UISocketPane("Condition"); 
+        UIElement socketPane = new UIElement("Condition"); 
         
         CallOutput trueCallSocket = new CallOutput("True");
         socketPane.addCallOutput(trueCallSocket);
