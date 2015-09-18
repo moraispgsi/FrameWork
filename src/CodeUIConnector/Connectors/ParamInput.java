@@ -45,7 +45,7 @@ public class ParamInput {
     
     public boolean isCastCompatible(ParamOutput paramOutput){
         
-        return !DynamicClassUtils
+        return DynamicClassUtils
                 .primitiveToWrapper(
                         getVariableType()
                 )
