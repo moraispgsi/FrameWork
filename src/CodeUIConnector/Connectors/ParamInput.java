@@ -3,21 +3,23 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package CodeUIConnector;
+package CodeUIConnector.Connectors;
+
+import CodeUIConnector.SocketPane.UISocket;
 
 
-public class VariableInputSocket implements Socket {
+public class ParamInput {
     
     private final Class<?> variableType;
     private final UISocket uiSocket;
-    private VariableOutputSocket outputSource;
+    private ParamOutput outputSource;
 
-    public VariableInputSocket(Class<?> variableType, String name) {
+    public ParamInput(Class<?> variableType, String name) {
         this.variableType = variableType;
-        this.uiSocket = new UIVariableSocket(UIVariableSocket.Type.INPUT,5,name);
+        this.uiSocket = new UIParamSocket(UIParamSocket.Type.INPUT,5,name);
     }
 
-    @Override
+
     public Class<?> getVariableType() {
         return variableType;
     }
@@ -26,11 +28,11 @@ public class VariableInputSocket implements Socket {
         return uiSocket;
     }
 
-    public VariableOutputSocket getOutputSource() {
+    public ParamOutput getOutputSource() {
         return outputSource;
     }
 
-    public void setOutputSource(VariableOutputSocket output) {
+    public void setOutputSource(ParamOutput output) {
         if(output == null)
             return;
         

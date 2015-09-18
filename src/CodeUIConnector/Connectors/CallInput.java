@@ -3,15 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package CodeUIConnector;
+package CodeUIConnector.Connectors;
+
+import CodeUIConnector.SocketPane.UISocket;
 
 
-public class InputCallSocket {
+
+
+public class CallInput {
     
     private final UISocket uiSocket;
 
-    public InputCallSocket() {
+    public CallInput() {
         this.uiSocket = new UICallSocket(UICallSocket.Type.INPUT,5,"Executar");
+        
+        
+        
     }
 
     public UISocket getUISocket() {

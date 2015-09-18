@@ -51,7 +51,4 @@ public class DraggableTitle extends StackPane {
         
     }
     
-    
-    
-    
 }

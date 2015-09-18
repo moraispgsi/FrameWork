@@ -6,10 +6,17 @@
 package CodeUIConnector;
 
 
+import CodeUIConnector.SocketPane.UISocket;
+import javafx.beans.Observable;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleObjectProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.geometry.Point2D;
+import javafx.scene.Parent;
 import javafx.scene.shape.CubicCurve;
+import javafx.scene.transform.Transform;
 import org.apache.commons.math3.geometry.euclidean.twod.*;
 
 
@@ -19,8 +26,34 @@ import org.apache.commons.math3.geometry.euclidean.twod.*;
  */
 public class HorizontalCurvedLine extends CubicCurve {
 
-
+    private ObjectProperty<Point2D> sceneBoundsProperty = new SimpleObjectProperty<>();
+    
+    private ChangeListener<Transform> parentTransformListener;
+    
     public HorizontalCurvedLine() {
+        
+        sceneBoundsProperty.set(Point2D.ZERO);
+
+        
+        parentProperty().addListener((ChangeListener<Parent>) (ObservableValue<? extends Parent> observable, Parent oldValue, Parent newValue) -> {
+            
+            if(newValue == null)
+                return;
+            
+            if(oldValue != null)
+                newValue.localToSceneTransformProperty().removeListener(parentTransformListener);
+            
+            parentTransformListener = (o2, oldValue2, newValue2) -> {
+                
+                sceneBoundsProperty.setValue(newValue.localToScene(0, 0));
+                
+            };
+
+            newValue.localToSceneTransformProperty().addListener(parentTransformListener);
+            
+            
+        });
+
         
         DoubleBinding controlX1 = new DoubleBinding(){
 
@@ -88,7 +121,7 @@ public class HorizontalCurvedLine extends CubicCurve {
 
     }
     
-    public void bindLeftSocket(ObjectProperty<Point2D> sceneBoundsProperty,UISocket socket){
+    public void bindLeftSocket(UISocket socket){
 
         DoubleBinding bindX = new DoubleBinding(){
 
@@ -131,7 +164,7 @@ public class HorizontalCurvedLine extends CubicCurve {
         
     }
     
-    public void bindRightSocket(ObjectProperty<Point2D> sceneBoundsProperty,UISocket socket){
+    public void bindRightSocket(UISocket socket){
 
         DoubleBinding bindX = new DoubleBinding(){
 

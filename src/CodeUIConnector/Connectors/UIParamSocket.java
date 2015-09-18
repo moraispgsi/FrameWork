@@ -3,8 +3,10 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package CodeUIConnector;
+package CodeUIConnector.Connectors;
 
+
+import CodeUIConnector.SocketPane.UISocket;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
 import javafx.beans.property.SimpleObjectProperty;
@@ -16,37 +18,30 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-/**
- *
- * @author Morai
- */
-public class UICallSocket  extends UISocket{
+
+public class UIParamSocket  extends UISocket{
     
     public static enum Type{INPUT,OUTPUT};
     
-    private final Color COLOR_IDLE = Color.LIGHTSTEELBLUE;
+    private final Color COLOR_IDLE = Color.LIGHTGREY;
     private final Color COLOR_CONNECTED = Color.LIGHTBLUE;
     private final Color COLOR_AVAILABLE = Color.LIGHTGREEN;
-    
-    
+
     private ObjectProperty<Bounds> plugSceneBounds = new SimpleObjectProperty<>();
     private final HBox hBox = new HBox();
     private final Rectangle plug = new Rectangle();
     private final Label nameLabel = new Label();
     
-    public UICallSocket(Type type,double spacing,String name) {
+    public UIParamSocket(Type type,double spacing,String name) {
         
-
+        
         hBox.setSpacing(spacing);
         hBox.setAlignment(Pos.CENTER);
-        
         
         nameLabel.setText(name);
         
         plug.setWidth(4);
-        plug.setHeight(30);
-        
-        
+        plug.setHeight(20);
         plug.setFill(COLOR_IDLE);
         hBox.getChildren().addAll(plug,nameLabel);
         if(type == Type.OUTPUT){
@@ -93,5 +88,7 @@ public class UICallSocket  extends UISocket{
         super.showIdle();
     }
 
+    
+    
 
 }

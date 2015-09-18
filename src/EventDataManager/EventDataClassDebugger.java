@@ -5,9 +5,8 @@
  */
 package EventDataManager;
 
-import CodeUIConnector.UICanvas;
-import CodeUIConnector.UIEndMethod;
-import CodeUIConnector.UIMethod;
+import CodeUIConnector.UIMethodCanvas;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -71,7 +70,7 @@ public class EventDataClassDebugger extends Stage{
             
             pane.setPrefSize(500,500);
             
-            Region canvas = new UICanvas("",method);
+            Region canvas = new UIMethodCanvas("",method);
             canvas.setPrefSize(200,200);
             pane.getChildren().add(canvas);
 

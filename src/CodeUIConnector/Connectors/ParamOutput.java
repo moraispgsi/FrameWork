@@ -3,20 +3,22 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package CodeUIConnector;
+package CodeUIConnector.Connectors;
+
+import CodeUIConnector.SocketPane.UISocket;
 
 
-public class VariableOutputSocket implements Socket {
+public class ParamOutput {
 
     private final Class<?> variableType;
     private final UISocket uiSocket;
 
-    public VariableOutputSocket(Class<?> variableType, String name) {
+    public ParamOutput(Class<?> variableType, String name) {
         this.variableType = variableType;
-        this.uiSocket = new UIVariableSocket(UIVariableSocket.Type.OUTPUT,5,name);
+        this.uiSocket = new UIParamSocket(UIParamSocket.Type.OUTPUT,5,name);
     }
     
-    @Override
+
     public Class<?> getVariableType() {
         return variableType;
     }
