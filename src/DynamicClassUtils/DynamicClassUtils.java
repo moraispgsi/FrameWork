@@ -6,13 +6,21 @@
 package DynamicClassUtils;
 
 
+import Main.Test;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.tools.JavaCompiler;
 import javax.tools.ToolProvider;
 
@@ -126,6 +134,23 @@ public class DynamicClassUtils {
         Class<?> cls = Class.forName(file.getParentFile().getName() + "." + fileName, true, classLoader);
         return cls;
     }
+    
+    public static List<Class> getLoadedClasses(ClassLoader classLoader) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException{
+        
+        Field classes;
+
+        classes = ClassLoader.class.getDeclaredField("classes");
+        classes.setAccessible(true);
+
+        List<Class> classList = new ArrayList((List<Class>) classes.get(classLoader));
+
+        classes.setAccessible(false);
+        
+        return classList;
+
+    }
+    
+    
 
 
 }

@@ -7,9 +7,14 @@ package Main;
 
 import EventDataManager.EventDataManager;
 import java.io.File;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.application.Application;
 import javafx.scene.Scene;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 
 /**
@@ -18,11 +23,21 @@ import javafx.stage.Stage;
  */
 public class Test  extends Application {
     
+   
     @Override
     public void start(Stage primaryStage) {
         
-        DirectoryChooser dirChooser = new DirectoryChooser();
-        File file = dirChooser.showDialog(primaryStage);
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        
+        File file = new File("C:\\Users\\Morai\\Desktop\\Project");
 
         EventDataManager eDataManager = new EventDataManager(primaryStage,file);
         
@@ -39,6 +54,8 @@ public class Test  extends Application {
      */
     public static void main(String[] args) {
         launch(args);
+        
+        
     }
 
 }

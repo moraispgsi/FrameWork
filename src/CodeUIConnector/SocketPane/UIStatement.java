@@ -8,10 +8,10 @@ package CodeUIConnector.SocketPane;
 import CodeUIConnector.DraggableTitle;
 import CodeUIConnector.SocketSets.Pluggable;
 import CodeUIConnector.SocketSets.SocketSet;
-import CodeUIConnector.Connectors.CallInput;
-import CodeUIConnector.Connectors.CallOutput;
-import CodeUIConnector.Connectors.ParamInput;
-import CodeUIConnector.Connectors.ParamOutput;
+import CodeUIConnector.CallSockets.CallInput;
+import CodeUIConnector.CallSockets.CallOutput;
+import CodeUIConnector.ParamSockets.ParamInput;
+import CodeUIConnector.ParamSockets.ParamOutput;
 import javafx.collections.ObservableSet;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -19,7 +19,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-public class UIElement extends Region implements Pluggable {
+public class UIStatement extends Region implements Pluggable {
     
     private final SocketSet socketSet = new SocketSet();
     
@@ -35,7 +35,7 @@ public class UIElement extends Region implements Pluggable {
     
      
 
-    public UIElement(String title) {
+    public UIStatement(String title) {
   
 
         titleBar = new DraggableTitle(title,layoutXProperty(),layoutYProperty());

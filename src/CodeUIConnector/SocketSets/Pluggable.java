@@ -5,10 +5,10 @@
  */
 package CodeUIConnector.SocketSets;
 
-import CodeUIConnector.Connectors.CallInput;
-import CodeUIConnector.Connectors.CallOutput;
-import CodeUIConnector.Connectors.ParamInput;
-import CodeUIConnector.Connectors.ParamOutput;
+import CodeUIConnector.CallSockets.CallInput;
+import CodeUIConnector.CallSockets.CallOutput;
+import CodeUIConnector.ParamSockets.ParamInput;
+import CodeUIConnector.ParamSockets.ParamOutput;
 import javafx.collections.ObservableSet;
 
 public interface Pluggable {
