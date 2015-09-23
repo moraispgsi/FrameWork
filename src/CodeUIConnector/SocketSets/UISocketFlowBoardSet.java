@@ -5,10 +5,10 @@
  */
 package CodeUIConnector.SocketSets;
 
-import CodeUIConnector.CallSockets.CallInput;
-import CodeUIConnector.CallSockets.CallOutput;
-import CodeUIConnector.ParamSockets.ParamInput;
-import CodeUIConnector.ParamSockets.ParamOutput;
+import CodeUIConnector.InvokeSockets.Controller.InvokeInput;
+import CodeUIConnector.InvokeSockets.Controller.InvokeOutput;
+import CodeUIConnector.ParamSockets.Controller.ParamInput;
+import CodeUIConnector.ParamSockets.Controller.ParamOutput;
 import CodeUIConnector.SocketPane.UISocket;
 import DynamicClassUtils.DynamicClassUtils;
 import java.util.HashSet;
@@ -113,12 +113,12 @@ public class UISocketFlowBoardSet implements Pluggable {
     }
 
     @Override
-    public ObservableSet<CallInput> getCallInputs() {
+    public ObservableSet<InvokeInput> getCallInputs() {
         return socketSet.getCallInputs();
     }
 
     @Override
-    public ObservableSet<CallOutput> getCallOutputs() {
+    public ObservableSet<InvokeOutput> getCallOutputs() {
         return socketSet.getCallOutputs();
     }
 

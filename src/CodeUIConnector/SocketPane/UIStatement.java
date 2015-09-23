@@ -8,10 +8,10 @@ package CodeUIConnector.SocketPane;
 import CodeUIConnector.DraggableTitle;
 import CodeUIConnector.SocketSets.Pluggable;
 import CodeUIConnector.SocketSets.SocketSet;
-import CodeUIConnector.CallSockets.CallInput;
-import CodeUIConnector.CallSockets.CallOutput;
-import CodeUIConnector.ParamSockets.ParamInput;
-import CodeUIConnector.ParamSockets.ParamOutput;
+import CodeUIConnector.InvokeSockets.Controller.InvokeInput;
+import CodeUIConnector.InvokeSockets.Controller.InvokeOutput;
+import CodeUIConnector.ParamSockets.Controller.ParamInput;
+import CodeUIConnector.ParamSockets.Controller.ParamOutput;
 import javafx.collections.ObservableSet;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
@@ -32,12 +32,10 @@ public class UIStatement extends Region implements Pluggable {
     private final VBox callOutputVBox = new VBox(IO_VERTICAL_SPACING);
     private final VBox paramInputVBox = new VBox(IO_VERTICAL_SPACING);
     private final VBox paramOutputVBox = new VBox(IO_VERTICAL_SPACING);
+
     
-     
-
     public UIStatement(String title) {
-  
-
+        
         titleBar = new DraggableTitle(title,layoutXProperty(),layoutYProperty());
 
         //setStyle("-fx-border-width: 1; -fx-border-color: grey;-fx-border-radius: 10 10 10 10; -fx-background-radius: 10 10 0 0;");
@@ -97,7 +95,7 @@ public class UIStatement extends Region implements Pluggable {
 
     }
     
-    public void addCallInput(CallInput socket){
+    public void addInvokeInput(InvokeInput socket){
         
         removeCallInput(socket);
         callInputVBox.getChildren().add((Node)socket.getUISocket());
@@ -105,20 +103,20 @@ public class UIStatement extends Region implements Pluggable {
 
     }
     
-    public void removeCallInput(CallInput socket){
+    public void removeCallInput(InvokeInput socket){
 
         callInputVBox.getChildren().remove(socket.getUISocket());
         getCallInputs().remove(socket);
     }
     
-    public void addCallOutput(CallOutput socket){
+    public void addInvokeOutput(InvokeOutput socket){
         
         removeCallOutput(socket);
         callOutputVBox.getChildren().add(socket.getUISocket());
         getCallOutputs().add(socket);
 
     }
-    public void removeCallOutput(CallOutput socket){
+    public void removeCallOutput(InvokeOutput socket){
 
         callOutputVBox.getChildren().remove(socket.getUISocket());
         getCallOutputs().remove(socket);
@@ -137,12 +135,12 @@ public class UIStatement extends Region implements Pluggable {
     }
     
     @Override
-    public ObservableSet<CallInput> getCallInputs() {
+    public ObservableSet<InvokeInput> getCallInputs() {
         return socketSet.getCallInputs();
     }
 
     @Override
-    public ObservableSet<CallOutput> getCallOutputs() {
+    public ObservableSet<InvokeOutput> getCallOutputs() {
         return socketSet.getCallOutputs();
     }
     

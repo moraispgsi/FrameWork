@@ -5,10 +5,10 @@
  */
 package CodeUIConnector.SocketSets;
 
-import CodeUIConnector.CallSockets.CallInput;
-import CodeUIConnector.CallSockets.CallOutput;
-import CodeUIConnector.ParamSockets.ParamInput;
-import CodeUIConnector.ParamSockets.ParamOutput;
+import CodeUIConnector.InvokeSockets.Controller.InvokeInput;
+import CodeUIConnector.InvokeSockets.Controller.InvokeOutput;
+import CodeUIConnector.ParamSockets.Controller.ParamInput;
+import CodeUIConnector.ParamSockets.Controller.ParamOutput;
 import javafx.collections.ObservableSet;
 
 public interface Pluggable {
@@ -17,8 +17,8 @@ public interface Pluggable {
 
     public ObservableSet<ParamOutput> getOutputParams();
     
-    public ObservableSet<CallInput> getCallInputs();
+    public ObservableSet<InvokeInput> getCallInputs();
     
-    public ObservableSet<CallOutput> getCallOutputs();
+    public ObservableSet<InvokeOutput> getCallOutputs();
     
 }

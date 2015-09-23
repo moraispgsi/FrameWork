@@ -5,32 +5,53 @@
  */
 package CodeUIConnector.SocketPane;
 
-import CodeUIConnector.CallSockets.CallInput;
-import CodeUIConnector.CallSockets.CallOutput;
-import CodeUIConnector.ParamSockets.ParamInput;
-import CodeUIConnector.ParamSockets.ParamOutput;
-import Statements.FieldStatement;
-import Statements.MethodCallStatement;
+import CodeUIConnector.InvokeSockets.Controller.InvokeInput;
+import CodeUIConnector.InvokeSockets.Controller.InvokeOutput;
+import CodeUIConnector.ParamSockets.Controller.ParamInput;
+import CodeUIConnector.ParamSockets.Controller.ParamOutput;
+import Statements.BranchStatement;
+import Statements.FieldDeclareStatement;
+import Statements.FieldInvokeStatement;
+import Statements.MethodInvokeStatement;
+import Statements.ParamStatement;
+import Statements.ReturnStatement;
+import Statements.RootStatement;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
 
 /**
  *
- * @author Morais
+ * @author Ricardo José Horta Morais
  */
 public class UIStatementFactory {
     
-    public static UIStatement createMethodCall(Method method){
+    public static UIStatement createMethodInvoke(Method method){
         
         UIStatement uiStatement = new UIStatement(method.getName());
         
-        MethodCallStatement statement = new MethodCallStatement();
+        MethodInvokeStatement statement = new MethodInvokeStatement();
+        statement.setMethod(method);
         
-        CallInput callInputSocket = new CallInput();
-        uiStatement.addCallInput(callInputSocket);
+        FieldDeclareStatement fieldDeclareStatement = new FieldDeclareStatement(statement.getReturnType(),"PREHOLDER");
+        fieldDeclareStatement.setReturningStatement(statement);
         
-        CallOutput callOutputSocket = new CallOutput("Next");
-        uiStatement.addCallOutput(callOutputSocket);
+        InvokeInput invokeInputSocket = new InvokeInput(fieldDeclareStatement);
+        uiStatement.addInvokeInput(invokeInputSocket);
+        
+        InvokeOutput invokeOutputSocket = new InvokeOutput("Next");
+        uiStatement.addInvokeOutput(invokeOutputSocket);
+        
+        invokeOutputSocket.setOnConnect((invokeInput,invokeOutput)->{
+            
+            fieldDeclareStatement.setNextStatement(invokeInput.getStatement());
+            
+        });
+        
+        invokeOutputSocket.setOnDisconnect((invokeInput,invokeOutput)->{
+            
+            fieldDeclareStatement.setNextStatement(null);
+            
+        });
         
         statement.setMethod(method);
         
@@ -40,23 +61,33 @@ public class UIStatementFactory {
 
             ParamInput paramInput = new ParamInput(params[i].getType(),params[i].getName());
             uiStatement.addInputParam(paramInput);
-            FieldStatement fieldStatement = new FieldStatement();
-            fieldStatement.setType(paramInput.getVariableType());
-            statement.getArguments().add(fieldStatement);
+            
+            FieldInvokeStatement fieldInvokeStatement = new FieldInvokeStatement();
+            fieldInvokeStatement.setType(paramInput.getVariableType());
+            statement.getArguments().add(fieldInvokeStatement);
             
             paramInput.setOnConnect((input,output)-> {
                 
-                fieldStatement.setName(output.getName());
-                System.out.println("Missing dependency: "+statement.missingDependency());
-
+                fieldInvokeStatement.setFieldReference(output.getFieldReference());
+                
+                if(!fieldDeclareStatement.missingDependency())
+                    System.out.println(fieldDeclareStatement.generateJavaCode());
+                
             });
+            
+            paramInput.setOnDisconnect((input,output)-> {
+                
+                fieldInvokeStatement.setFieldReference(null);
+                
+            });
+            
         }
 
         Class<?> returnType = method.getReturnType();
         
         if(!method.getReturnType().equals(Void.TYPE)){
             
-            ParamOutput socket = new ParamOutput(returnType,returnType.getSimpleName());
+            ParamOutput socket = new ParamOutput(returnType,"returnValue",fieldDeclareStatement);
             uiStatement.addOutputParam(socket);
         
         }
@@ -68,16 +99,39 @@ public class UIStatementFactory {
     public static UIStatement createEndMethod(Method method){
         
         UIStatement uiStatement = new UIStatement(method.getName()); 
-
+        ReturnStatement statement = new ReturnStatement(method);
+        
         Class<?> returnType = method.getReturnType();
         
         if(!returnType.equals(Void.TYPE)){
             
-            CallInput callInputSocket = new CallInput();
-            uiStatement.addCallInput(callInputSocket);
+            InvokeInput invokeInputSocket = new InvokeInput(statement);
+            uiStatement.addInvokeInput(invokeInputSocket);
         
-            ParamInput socket = new ParamInput(returnType,"return");
-            uiStatement.addInputParam(socket);
+            ParamInput paramInput = new ParamInput(returnType,"return");
+            uiStatement.addInputParam(paramInput);
+            
+            FieldInvokeStatement fieldInvokeStatement = new FieldInvokeStatement();
+            fieldInvokeStatement.setType(paramInput.getVariableType());
+            
+            statement.setReturningStatement(fieldInvokeStatement);
+            
+            paramInput.setOnConnect((input,output)-> {
+                
+                //PLACE HOLDER
+                fieldInvokeStatement.setFieldReference(output.getFieldReference());
+                
+                if(!statement.missingDependency())
+                    System.out.println(statement.generateJavaCode());
+                
+            });
+            
+            paramInput.setOnDisconnect((input,output)-> {
+                
+                fieldInvokeStatement.setFieldReference(null);
+                
+            });
+            
             
         }
         
@@ -88,18 +142,38 @@ public class UIStatementFactory {
     public static UIStatement createStartMethod(Method method){
         
         UIStatement uiStatement = new UIStatement(method.getName() + " Start"); 
-    
-        CallOutput callOutputSocket = new CallOutput("Next");
-        uiStatement.addCallOutput(callOutputSocket);
+        
+        RootStatement statement = new RootStatement();
+        
+        
+        InvokeOutput callOutputSocket = new InvokeOutput("Next");
+        uiStatement.addInvokeOutput(callOutputSocket);
+
+        callOutputSocket.setOnConnect((callInput, callOutput)->{
+            
+            statement.setNextStatement(callInput.getStatement());
+            
+            if(!statement.missingDependency())
+                    System.out.println(statement.generateJavaCode());
+        });
+        callOutputSocket.setOnDisconnect((callInput, callOutput)->{
+            
+            statement.setNextStatement(null);
+            
+        });
+        
+        
         
         for(Parameter param : method.getParameters()){
-
-            ParamOutput socket = new ParamOutput(param.getType(),param.getName());
-            uiStatement.addOutputParam(socket);
             
+            ParamStatement paramStatement = new ParamStatement(param.getType(),param.getName());
+            
+            ParamOutput socket = new ParamOutput(param.getType(),param.getName(),paramStatement);
+            uiStatement.addOutputParam(socket);
+
         }
         
-     return uiStatement;
+        return uiStatement;
         
     }
     
@@ -107,17 +181,60 @@ public class UIStatementFactory {
         
         UIStatement socketPane = new UIStatement("Condition"); 
         
-        CallOutput trueCallSocket = new CallOutput("True");
-        socketPane.addCallOutput(trueCallSocket);
+        BranchStatement statement = new BranchStatement();
         
-        CallOutput falseCallSocket = new CallOutput("False");
-        socketPane.addCallOutput(falseCallSocket);
+        InvokeOutput trueInvokeOutput = new InvokeOutput("True");
+        socketPane.addInvokeOutput(trueInvokeOutput);
         
-        CallInput callInputSocket = new CallInput();
-        socketPane.addCallInput(callInputSocket);
+        trueInvokeOutput.setOnConnect((callInput,callOutput)->{
+            
+            statement.setTrueNextStatement(callInput.getStatement());
+
+        });
+        trueInvokeOutput.setOnDisconnect((callInput,callOutput)->{
+            statement.setTrueNextStatement(null);
+        });
         
-        ParamInput socket = new ParamInput(Boolean.class,"Condition");
-        socketPane.addInputParam(socket);
+        
+        InvokeOutput falseInvokeOutput = new InvokeOutput("False");
+        socketPane.addInvokeOutput(falseInvokeOutput);
+        
+        falseInvokeOutput.setOnConnect((callInput,callOutput)->{
+            
+            statement.setFalseNextStatement(callInput.getStatement());
+
+        });
+        falseInvokeOutput.setOnDisconnect((callInput,callOutput)->{
+            
+            statement.setFalseNextStatement(null);
+
+        });
+
+        
+        InvokeInput callInput = new InvokeInput(statement);
+        socketPane.addInvokeInput(callInput);
+        
+        ParamInput conditionInput = new ParamInput(Boolean.class,"Condition");
+        socketPane.addInputParam(conditionInput);
+        
+        FieldInvokeStatement fieldInvokeStatement = new FieldInvokeStatement();
+        fieldInvokeStatement.setType(conditionInput.getVariableType());
+        statement.setConditionStatement(fieldInvokeStatement);
+
+        conditionInput.setOnConnect((input,output)-> {
+
+            fieldInvokeStatement.setFieldReference(output.getFieldReference());
+
+            if(!statement.missingDependency())
+                System.out.println(statement.generateJavaCode());
+
+        });
+        conditionInput.setOnDisconnect((input,output)-> {
+
+            fieldInvokeStatement.setFieldReference(null);
+
+        });
+        
         
         return socketPane;
         

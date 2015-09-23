@@ -9,9 +9,9 @@ package Statements;
  *
  * @author Morai
  */
-public class FieldStatement implements ReturningStatement{
+public class FieldInvokeStatement implements ReturningStatement{
 
-    private String name;
+    private FieldReference fieldReference;
     private Class<?> type;
     
     @Override
@@ -21,7 +21,7 @@ public class FieldStatement implements ReturningStatement{
 
     @Override
     public boolean missingDependency() {
-       return name == null || name.isEmpty() || type == null;
+       return fieldReference == null || type == null;
     }
 
     @Override
@@ -29,16 +29,16 @@ public class FieldStatement implements ReturningStatement{
         if(missingDependency())
             throw new RuntimeException("Missing Dependency");
         
-        return name;
-    }
-
-    public void setName(String name) {
-        //REGEX name valid
-        this.name = name;
+        return fieldReference.getName();
     }
 
     public void setType(Class<?> type) {
         this.type = type;
     }
+
+    public void setFieldReference(FieldReference fieldReference) {
+        this.fieldReference = fieldReference;
+    }
+    
     
 }

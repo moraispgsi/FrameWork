@@ -5,6 +5,7 @@
  */
 package Statements;
 
+import DynamicClassUtils.DynamicClassUtils;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -13,11 +14,13 @@ import java.util.List;
  *
  * @author Morais
  */
-public class MethodCallStatement implements ReturningStatement {
+public class MethodInvokeStatement implements ReturningStatement {
     
     private Method method;
     private final List<ReturningStatement> arguments = new ArrayList<>();
+    private Statement nextStatement;
 
+    
     @Override
     public boolean missingDependency() {
         
@@ -32,8 +35,8 @@ public class MethodCallStatement implements ReturningStatement {
         
         for(int i=0;i<method.getParameterCount();i++){
             
-            if(!DynamicClassUtils.DynamicClassUtils.primitiveToWrapper(paramTypes[i]).isAssignableFrom(
-                    DynamicClassUtils.DynamicClassUtils.primitiveToWrapper(statements[i].getReturnType())))
+            if(!DynamicClassUtils.primitiveToWrapper(paramTypes[i]).isAssignableFrom(
+                    DynamicClassUtils.primitiveToWrapper(statements[i].getReturnType())))
                 return true;
             
             if(statements[i].missingDependency())
@@ -50,7 +53,6 @@ public class MethodCallStatement implements ReturningStatement {
         
         if(missingDependency())
             throw new RuntimeException("Missing Dependency.");
-        
         
         String result = method.getName() + "(";
         
@@ -72,7 +74,7 @@ public class MethodCallStatement implements ReturningStatement {
         
         result += aux.substring(0, aux.length()-1);
         
-        result += ");";
+        result += ")";
         return result;
         
     }
@@ -100,6 +102,17 @@ public class MethodCallStatement implements ReturningStatement {
             
         return method.getReturnType();
     }
+
+    public Statement getNextStatement() {
+        return nextStatement;
+    }
+
+    public void setNextStatement(Statement nextStatement) {
+        this.nextStatement = nextStatement;
+    }
+
+
+    
     
     
  

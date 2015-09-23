@@ -5,12 +5,12 @@
  */
 package CodeUIConnector;
 
-import CodeUIConnector.ParamSockets.ParamOutput;
-import CodeUIConnector.ParamSockets.ParamInput;
+import CodeUIConnector.ParamSockets.Controller.ParamOutput;
+import CodeUIConnector.ParamSockets.Controller.ParamInput;
 import CodeUIConnector.SocketSets.Pluggable;
-import CodeUIConnector.CallSockets.CallInput;
+import CodeUIConnector.InvokeSockets.Controller.InvokeInput;
 import CodeUIConnector.SocketSets.UISocketFlowBoardSet;
-import CodeUIConnector.CallSockets.CallOutput;
+import CodeUIConnector.InvokeSockets.Controller.InvokeOutput;
 import CodeUIConnector.SocketPane.UISocket;
 import CodeUIConnector.SocketPane.UIStatementFactory;
 import static DynamicClassUtils.DynamicClassUtils.getLoadedClasses;
@@ -45,12 +45,12 @@ public class UIMethodFlowBoard extends Region {
     private final UISocketFlowBoardSet socketSet = new UISocketFlowBoardSet();
     
     private final Map<ParamInput, HorizontalCurvedLine> lineVariableMap = new HashMap<>();
-    private final Map<CallOutput, HorizontalCurvedLine> lineCallMap = new HashMap<>();
+    private final Map<InvokeOutput, HorizontalCurvedLine> lineCallMap = new HashMap<>();
 
     private final String filePath;
     private final Method method;
 
-    private CallOutput draggingCallOutput;
+    private InvokeOutput draggingCallOutput;
     private ParamOutput draggingParamOutput;
     private HorizontalCurvedLine draggingLine;
 
@@ -102,13 +102,13 @@ public class UIMethodFlowBoard extends Region {
                 });
 
         socketSet.getCallInputs()
-                .addListener((SetChangeListener.Change<? extends CallInput> change) -> {
+                .addListener((SetChangeListener.Change<? extends InvokeInput> change) -> {
 
                     createCallInputListeners(change);
                 });
 
         socketSet.getCallOutputs()
-                .addListener((SetChangeListener.Change<? extends CallOutput> change) -> {
+                .addListener((SetChangeListener.Change<? extends InvokeOutput> change) -> {
 
                     createCallOutputListeners(change);
                 });
@@ -121,7 +121,7 @@ public class UIMethodFlowBoard extends Region {
 
         getChildren().add(UIStatementFactory.createCondition());
         
-        getChildren().add(UIStatementFactory.createMethodCall(this.method));
+        getChildren().add(UIStatementFactory.createMethodInvoke(this.method));
         
         
         if (!method.getReturnType().equals(Void.TYPE)) {
@@ -205,11 +205,11 @@ public class UIMethodFlowBoard extends Region {
 
     }
 
-    private void createCallInputListeners(SetChangeListener.Change<? extends CallInput> change) {
+    private void createCallInputListeners(SetChangeListener.Change<? extends InvokeInput> change) {
 
         if (change.wasAdded()) {
 
-            CallInput callInput = change.getElementAdded();
+            InvokeInput callInput = change.getElementAdded();
 
             callInput.getUISocket().addEventHandler(MouseDragEvent.MOUSE_DRAG_ENTERED, e -> {
 
@@ -233,11 +233,11 @@ public class UIMethodFlowBoard extends Region {
 
     }
 
-    private void createCallOutputListeners(SetChangeListener.Change<? extends CallOutput> change) {
+    private void createCallOutputListeners(SetChangeListener.Change<? extends InvokeOutput> change) {
 
         if (change.wasAdded()) {
 
-            CallOutput callOutput = change.getElementAdded();
+            InvokeOutput callOutput = change.getElementAdded();
             
             callOutput.getUISocket().addEventHandler(MouseEvent.MOUSE_PRESSED, e -> {
                 
@@ -393,7 +393,7 @@ public class UIMethodFlowBoard extends Region {
 
         }
 
-        paramInput.setOutputSource(draggingParamOutput);
+        paramInput.connect(draggingParamOutput);
 
    
     }
@@ -467,7 +467,7 @@ public class UIMethodFlowBoard extends Region {
     /*
         CallInput Listeners
     */
-    private void onCallInputMouseDragEntered(MouseEvent e,CallInput callInput){
+    private void onCallInputMouseDragEntered(MouseEvent e,InvokeInput callInput){
         
         UISocket inputUISocket = callInput.getUISocket();
 
@@ -475,10 +475,10 @@ public class UIMethodFlowBoard extends Region {
             return;
         }
 
-        if (draggingCallOutput.getConnectSocket() != null) {
+        if (draggingCallOutput.getConnectedCallInput() != null) {
 
             if (lineCallMap.containsKey(draggingCallOutput)
-                    && draggingCallOutput.getConnectSocket() != callInput) {
+                    && draggingCallOutput.getConnectedCallInput() != callInput) {
 
                 lineCallMap.get(draggingCallOutput).getStrokeDashArray().addAll(2d, 10d);
             }
@@ -489,16 +489,16 @@ public class UIMethodFlowBoard extends Region {
         
     }
     
-    private void onCallInputMouseDragExited(MouseEvent e,CallInput callInput){
+    private void onCallInputMouseDragExited(MouseEvent e,InvokeInput callInput){
         
          if (draggingCallOutput == null) {
             return;
         }
 
-        if (draggingCallOutput.getConnectSocket() != null) {
+        if (draggingCallOutput.getConnectedCallInput() != null) {
 
             if (lineCallMap.containsKey(draggingCallOutput)
-                    && draggingCallOutput.getConnectSocket() != callInput) {
+                    && draggingCallOutput.getConnectedCallInput() != callInput) {
 
                 lineCallMap.get(draggingCallOutput).getStrokeDashArray().clear();
             }
@@ -510,13 +510,13 @@ public class UIMethodFlowBoard extends Region {
         
     }
     
-    private void onCallInputMouseDragReleased(MouseEvent e,CallInput callInput){
+    private void onCallInputMouseDragReleased(MouseEvent e,InvokeInput callInput){
         
         if (draggingCallOutput == null) {
             return;
         }
 
-        if (draggingCallOutput.getConnectSocket() != null) {
+        if (draggingCallOutput.getConnectedCallInput() != null) {
 
             if (lineCallMap.containsKey(draggingCallOutput)) {
 
@@ -541,20 +541,20 @@ public class UIMethodFlowBoard extends Region {
 
         this.getChildren().addAll(line);
 
-        draggingCallOutput.setConnect(callInput);
+        draggingCallOutput.connect(callInput);
         
     }
     
     /*
         CallOutput Listeners
     */
-    private void onCallOutputMousePressed(MouseEvent e,CallOutput callOutput){
+    private void onCallOutputMousePressed(MouseEvent e,InvokeOutput callOutput){
         
         setCursor(Cursor.CLOSED_HAND);
         
     }
     
-    private void onCallOutputDragDetected(MouseEvent e,CallOutput callOutput){
+    private void onCallOutputDragDetected(MouseEvent e,InvokeOutput callOutput){
         
         draggingCallOutput = callOutput;
         draggingCallOutput.getUISocket().startFullDrag();
@@ -578,18 +578,18 @@ public class UIMethodFlowBoard extends Region {
                 .forEach(socket -> socket.getUISocket().showAvailable());
     }
     
-    private void onCallOutputMouseEntered(MouseEvent e,CallOutput callOutput){
+    private void onCallOutputMouseEntered(MouseEvent e,InvokeOutput callOutput){
         
         this.setCursor(Cursor.OPEN_HAND);
         callOutput.getUISocket().showAvailable();
         
     }
     
-    private void onCallOutputMouseExited(MouseEvent e,CallOutput callOutput){
+    private void onCallOutputMouseExited(MouseEvent e,InvokeOutput callOutput){
         
         if (draggingCallOutput == null) {
                     
-            if(callOutput.getConnectSocket() != null)
+            if(callOutput.getConnectedCallInput() != null)
                 callOutput.getUISocket().showConnected();
             else
                 callOutput.getUISocket().showIdle();
@@ -603,12 +603,12 @@ public class UIMethodFlowBoard extends Region {
         
     }
     
-    private void onCallOutputMouseDragReleased(MouseEvent e,CallOutput callOutput){
+    private void onCallOutputMouseDragReleased(MouseEvent e,InvokeOutput callOutput){
         
         this.setCursor(Cursor.OPEN_HAND);
     }
     
-    private void onCallOutputMouseReleased(MouseEvent e,CallOutput callOutput){
+    private void onCallOutputMouseReleased(MouseEvent e,InvokeOutput callOutput){
         
         if (draggingCallOutput == null) {
 
@@ -619,14 +619,14 @@ public class UIMethodFlowBoard extends Region {
         }
         else{
 
-            if(draggingCallOutput.getConnectSocket() != null)
+            if(draggingCallOutput.getConnectedCallInput() != null)
                 draggingCallOutput.getUISocket().showConnected();
             else
                 draggingCallOutput.getUISocket().showIdle();
 
         }
 
-        if(callOutput.getConnectSocket() != null)
+        if(callOutput.getConnectedCallInput() != null)
               callOutput.getUISocket().showConnected();
         else
             callOutput.getUISocket().showIdle();

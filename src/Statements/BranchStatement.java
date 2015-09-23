@@ -21,10 +21,11 @@ public class BranchStatement implements Statement{
     
     @Override
     public boolean missingDependency() {
-        
+
         return ((conditionStatement == null || conditionStatement.missingDependency()) ||
-                (trueNextStatement != null && trueNextStatement.missingDependency())||
-                (falseNextStatement != null && falseNextStatement.missingDependency()));
+                (trueNextStatement != null && trueNextStatement.missingDependency())   ||
+                (falseNextStatement != null && falseNextStatement.missingDependency()) || 
+                (trueNextStatement == null && falseNextStatement == null));
            
     }
 
@@ -33,22 +34,21 @@ public class BranchStatement implements Statement{
         if(missingDependency())
             throw new RuntimeException("Dependency missing!");
         
-        if(trueNextStatement == null && falseNextStatement == null)
-            return "";
-        else if(trueNextStatement != null){
-            return "if("+conditionStatement.generateJavaCode()+"){\n" +
+       
+        if(falseNextStatement == null){
+            return "if("+conditionStatement.generateJavaCode()+"){\n\t" +
                     trueNextStatement.generateJavaCode() + "\n" +
                 "}";
         }
-        else if(falseNextStatement == null){
-            return "if(!"+conditionStatement.generateJavaCode()+"){\n" +
+        else if(trueNextStatement == null){
+            return "if(!"+conditionStatement.generateJavaCode()+"){\n\t" +
                     falseNextStatement.generateJavaCode() + "\n" +
                 "}";
         }else {
             
-            return "if("+conditionStatement.generateJavaCode()+"){\n" +
+            return "if("+conditionStatement.generateJavaCode()+"){\n\t" +
                     trueNextStatement.generateJavaCode() + "\n" +
-                "}else {\n"+
+                "}else {\n\t"+
                     falseNextStatement.generateJavaCode() + "\n" +        
                 "}";
             
@@ -62,12 +62,14 @@ public class BranchStatement implements Statement{
         this.conditionStatement = conditionStatement;
     }
 
-    public Statement getTrueNextStatement() {
-        return trueNextStatement;
+    public void setTrueNextStatement(Statement trueNextStatement) {
+        this.trueNextStatement = trueNextStatement;
     }
 
-    public Statement getFalseNextStatement() {
-        return falseNextStatement;
+    public void setFalseNextStatement(Statement falseNextStatement) {
+        this.falseNextStatement = falseNextStatement;
     }
+
+    
 
 }

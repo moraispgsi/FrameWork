@@ -3,11 +3,16 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package CodeUIConnector.ParamSockets;
+package CodeUIConnector.ParamSockets.Controller;
 
+import CodeUIConnector.ParamSockets.UI.UIParamSocket;
 import CodeUIConnector.SocketPane.UISocket;
 import DynamicClassUtils.DynamicClassUtils;
 
+/**
+ * Represents a param input
+ * @author Ricardo José Horta Morais
+ */
 public class ParamInput {
 
     private final Class<?> variableType;
@@ -16,6 +21,7 @@ public class ParamInput {
     private ParamOutput outputSource;
 
     private ParamSocketHandler onConnect;
+    private ParamSocketHandler onDisconnect;
 
     public ParamInput(Class<?> variableType, String name) {
 
@@ -30,6 +36,12 @@ public class ParamInput {
 
     }
 
+    public void setOnDisconnect(ParamSocketHandler onDisconnect) {
+        this.onDisconnect = onDisconnect;
+    }
+    
+    
+
     public Class<?> getVariableType() {
         return variableType;
     }
@@ -42,11 +54,13 @@ public class ParamInput {
         return outputSource;
     }
 
-    public void setOutputSource(ParamOutput output) {
+    public void connect(ParamOutput output) {
 
         if (output == null) {
             return;
         }
+        
+        disconnect();
 
         this.outputSource = output;
 
@@ -58,6 +72,19 @@ public class ParamInput {
         }
 
     }
+    
+    public void disconnect(){
+        
+        if(outputSource == null)
+            return;
+            
+        if(onDisconnect != null)
+            onDisconnect.handle(this, outputSource);
+         
+        this.outputSource = null;
+        
+    }
+    
 
     public boolean isCastCompatible(ParamOutput paramOutput) {
 
