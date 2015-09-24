@@ -25,7 +25,7 @@ public class FieldDeclareStatement implements Statement , FieldReference{
     @Override
     public boolean missingDependency() {
         
-        return returningStatement == null || returningStatement.missingDependency() || nextStatement != null && nextStatement.missingDependency();
+        return (returningStatement != null && returningStatement.missingDependency()) || (nextStatement != null && nextStatement.missingDependency());
         
     }
 

@@ -8,6 +8,7 @@ package Statements;
 import DynamicClassUtils.DynamicClassUtils;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -17,29 +18,30 @@ import java.util.List;
 public class MethodInvokeStatement implements ReturningStatement {
     
     private Method method;
-    private final List<ReturningStatement> arguments = new ArrayList<>();
+    private ReturningStatement [] arguments = null;
     private Statement nextStatement;
 
     
     @Override
     public boolean missingDependency() {
         
-        if(method == null || method.getParameterCount() != arguments.size())
+        if(method == null || arguments == null|| method.getParameterCount() != arguments.length)
             return true;
+        
+        for(ReturningStatement arg : arguments){
+            if(arg == null)
+                return true;
+        }
             
         Class<?> [] paramTypes = method.getParameterTypes();
-        
-        ReturningStatement [] statements = new ReturningStatement[arguments.size()];
-        arguments.toArray(statements);
-        
-        
+
         for(int i=0;i<method.getParameterCount();i++){
             
             if(!DynamicClassUtils.primitiveToWrapper(paramTypes[i]).isAssignableFrom(
-                    DynamicClassUtils.primitiveToWrapper(statements[i].getReturnType())))
+                    DynamicClassUtils.primitiveToWrapper(arguments[i].getReturnType())))
                 return true;
             
-            if(statements[i].missingDependency())
+            if(arguments[i].missingDependency())
                 return true;
             
         }
@@ -84,15 +86,26 @@ public class MethodInvokeStatement implements ReturningStatement {
         if(method.getReturnType().equals(Void.class))
             throw new RuntimeException("Must return something.");
         this.method = method;
+        arguments = new ReturningStatement[method.getParameterCount()];
         
     }
 
     public Method getMethod() {
         return method;
     }
+    
+    public void setArgument(int i, ReturningStatement returningStatement){
+        if(arguments == null)
+            throw new RuntimeException("Consider inserting a method to invoke first.");
+        
+        arguments[i] = returningStatement;
 
-    public List<ReturningStatement> getArguments() {
-        return arguments;
+    }
+
+    public ReturningStatement [] getArguments() {
+        
+        return Arrays.copyOf( arguments, arguments.length);
+        
     }
 
     @Override

@@ -18,6 +18,7 @@ import Statements.ReturnStatement;
 import Statements.RootStatement;
 import java.lang.reflect.Method;
 import java.lang.reflect.Parameter;
+import javafx.scene.input.MouseButton;
 
 /**
  *
@@ -62,23 +63,22 @@ public class UIStatementFactory {
             ParamInput paramInput = new ParamInput(params[i].getType(),params[i].getName());
             uiStatement.addInputParam(paramInput);
             
-            FieldInvokeStatement fieldInvokeStatement = new FieldInvokeStatement();
-            fieldInvokeStatement.setType(paramInput.getVariableType());
-            statement.getArguments().add(fieldInvokeStatement);
+            final int index = i;
             
-            paramInput.setOnConnect((input,output)-> {
-                
+            paramInput.setOnConnect((input,output)->{
+
+                FieldInvokeStatement fieldInvokeStatement = new FieldInvokeStatement();
+                fieldInvokeStatement.setType(paramInput.getVariableType());
                 fieldInvokeStatement.setFieldReference(output.getFieldReference());
                 
-                if(!fieldDeclareStatement.missingDependency())
-                    System.out.println(fieldDeclareStatement.generateJavaCode());
+                statement.setArgument(index, fieldInvokeStatement);
+                
                 
             });
-            
-            paramInput.setOnDisconnect((input,output)-> {
-                
-                fieldInvokeStatement.setFieldReference(null);
-                
+            paramInput.setOnDisconnect((input,output)->{
+
+                statement.setArgument(index, null);
+
             });
             
         }
@@ -87,10 +87,21 @@ public class UIStatementFactory {
         
         if(!method.getReturnType().equals(Void.TYPE)){
             
-            ParamOutput socket = new ParamOutput(returnType,"returnValue",fieldDeclareStatement);
-            uiStatement.addOutputParam(socket);
-        
+            ParamOutput paramOutput = new ParamOutput(returnType,"returnValue",fieldDeclareStatement);
+            uiStatement.addOutputParam(paramOutput);
+
         }
+        
+        uiStatement.setOnMouseClicked(e -> {
+            
+            if(e.getButton() == MouseButton.MIDDLE){
+                if(!fieldDeclareStatement.missingDependency())
+                    System.out.println(fieldDeclareStatement.generateJavaCode());
+                else
+                    System.out.println("Missing dependency.");
+            }
+            
+        });
         
         return uiStatement;
         
@@ -110,30 +121,31 @@ public class UIStatementFactory {
         
             ParamInput paramInput = new ParamInput(returnType,"return");
             uiStatement.addInputParam(paramInput);
+
             
-            FieldInvokeStatement fieldInvokeStatement = new FieldInvokeStatement();
-            fieldInvokeStatement.setType(paramInput.getVariableType());
+            paramInput.setOnConnect((input,output)->{
             
-            statement.setReturningStatement(fieldInvokeStatement);
-            
-            paramInput.setOnConnect((input,output)-> {
-                
-                //PLACE HOLDER
+                FieldInvokeStatement fieldInvokeStatement = new FieldInvokeStatement();
+                fieldInvokeStatement.setType(paramInput.getVariableType());
                 fieldInvokeStatement.setFieldReference(output.getFieldReference());
-                
-                if(!statement.missingDependency())
-                    System.out.println(statement.generateJavaCode());
-                
+                statement.setReturningStatement(fieldInvokeStatement);
             });
-            
-            paramInput.setOnDisconnect((input,output)-> {
-                
-                fieldInvokeStatement.setFieldReference(null);
-                
+            paramInput.setOnDisconnect((input,output)->{
+
+                statement.setReturningStatement(null);
+
             });
             
             
         }
+        
+        uiStatement.setOnMouseClicked(e -> {
+            
+            if(e.getButton() == MouseButton.MIDDLE)
+                if(!statement.missingDependency())
+                    System.out.println(statement.generateJavaCode());
+            
+        });
         
         return uiStatement;
         
@@ -153,8 +165,6 @@ public class UIStatementFactory {
             
             statement.setNextStatement(callInput.getStatement());
             
-            if(!statement.missingDependency())
-                    System.out.println(statement.generateJavaCode());
         });
         callOutputSocket.setOnDisconnect((callInput, callOutput)->{
             
@@ -173,18 +183,29 @@ public class UIStatementFactory {
 
         }
         
+        uiStatement.setOnMouseClicked(e -> {
+            
+            if(e.getButton() == MouseButton.MIDDLE){
+                if(!statement.missingDependency())
+                    System.out.println(statement.generateJavaCode());
+                else
+                    System.out.println("Missing dependency.");
+            }
+            
+        });
+        
         return uiStatement;
         
     }
     
     public static UIStatement createCondition(){
         
-        UIStatement socketPane = new UIStatement("Condition"); 
+        UIStatement uiStatement = new UIStatement("Condition"); 
         
         BranchStatement statement = new BranchStatement();
         
         InvokeOutput trueInvokeOutput = new InvokeOutput("True");
-        socketPane.addInvokeOutput(trueInvokeOutput);
+        uiStatement.addInvokeOutput(trueInvokeOutput);
         
         trueInvokeOutput.setOnConnect((callInput,callOutput)->{
             
@@ -197,7 +218,7 @@ public class UIStatementFactory {
         
         
         InvokeOutput falseInvokeOutput = new InvokeOutput("False");
-        socketPane.addInvokeOutput(falseInvokeOutput);
+        uiStatement.addInvokeOutput(falseInvokeOutput);
         
         falseInvokeOutput.setOnConnect((callInput,callOutput)->{
             
@@ -212,31 +233,101 @@ public class UIStatementFactory {
 
         
         InvokeInput callInput = new InvokeInput(statement);
-        socketPane.addInvokeInput(callInput);
+        uiStatement.addInvokeInput(callInput);
         
         ParamInput conditionInput = new ParamInput(Boolean.class,"Condition");
-        socketPane.addInputParam(conditionInput);
+        uiStatement.addInputParam(conditionInput);
         
-        FieldInvokeStatement fieldInvokeStatement = new FieldInvokeStatement();
-        fieldInvokeStatement.setType(conditionInput.getVariableType());
-        statement.setConditionStatement(fieldInvokeStatement);
-
-        conditionInput.setOnConnect((input,output)-> {
-
+        conditionInput.setOnConnect((input,output)->{
+            
+            FieldInvokeStatement fieldInvokeStatement = new FieldInvokeStatement();
+            fieldInvokeStatement.setType(conditionInput.getVariableType());
             fieldInvokeStatement.setFieldReference(output.getFieldReference());
-
-            if(!statement.missingDependency())
-                System.out.println(statement.generateJavaCode());
+            statement.setConditionStatement(fieldInvokeStatement);
+        });
+        conditionInput.setOnDisconnect((input,output)->{
+        
+            statement.setConditionStatement(null);
 
         });
-        conditionInput.setOnDisconnect((input,output)-> {
 
-            fieldInvokeStatement.setFieldReference(null);
-
+       
+        
+        uiStatement.setOnMouseClicked(e -> {
+            
+            if(e.getButton() == MouseButton.MIDDLE){
+                if(!statement.missingDependency())
+                    System.out.println(statement.generateJavaCode());
+                else
+                    System.out.println("Missing dependency.");
+            }
+            
         });
         
         
-        return socketPane;
+        
+        return uiStatement;
         
     }
+    
+    public static UIStatement createFieldDeclaration(Class<?> type,String name){
+        
+        UIStatement uiStatement = new UIStatement("Declare " + name + " : " + type.getSimpleName()); 
+        
+        
+
+        FieldDeclareStatement fieldDeclareStatement = new FieldDeclareStatement(type,name);
+        //fieldDeclareStatement.setReturningStatement();
+        InvokeInput invokeInputSocket = new InvokeInput(fieldDeclareStatement);
+        uiStatement.addInvokeInput(invokeInputSocket);
+        
+        InvokeOutput invokeOutputSocket = new InvokeOutput("Next");
+        uiStatement.addInvokeOutput(invokeOutputSocket);
+        
+        invokeOutputSocket.setOnConnect((input,output) -> {
+            
+            fieldDeclareStatement.setNextStatement(input.getStatement());
+            
+        });
+        
+        invokeOutputSocket.setOnDisconnect((input,output) -> {
+            
+            fieldDeclareStatement.setNextStatement(null);
+            
+        });
+        
+        ParamInput paramInput = new ParamInput(type,name);
+        uiStatement.addInputParam(paramInput);
+
+        paramInput.setOnConnect((input,output)->{
+            
+            FieldInvokeStatement fieldInvokeStatement = new FieldInvokeStatement();
+            fieldInvokeStatement.setType(paramInput.getVariableType());
+            fieldInvokeStatement.setFieldReference(output.getFieldReference());
+            fieldDeclareStatement.setReturningStatement(fieldInvokeStatement);
+        });
+        paramInput.setOnDisconnect((input,output)->{
+        
+            fieldDeclareStatement.setReturningStatement(null);
+
+        });
+
+        ParamOutput socket = new ParamOutput(type,"name",fieldDeclareStatement);
+        uiStatement.addOutputParam(socket);
+        
+        uiStatement.setOnMouseClicked(e -> {
+            
+            if(e.getButton() == MouseButton.MIDDLE){
+                if(!fieldDeclareStatement.missingDependency())
+                    System.out.println(fieldDeclareStatement.generateJavaCode());
+                else
+                    System.out.println("Missing dependency.");
+            }
+                
+        });
+        
+
+        return uiStatement;
+    }
+    
 }

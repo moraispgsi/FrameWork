@@ -123,6 +123,7 @@ public class UIMethodFlowBoard extends Region {
         
         getChildren().add(UIStatementFactory.createMethodInvoke(this.method));
         
+        getChildren().add(UIStatementFactory.createFieldDeclaration(Boolean.class,"Teste1"));
         
         if (!method.getReturnType().equals(Void.TYPE)) {
 
