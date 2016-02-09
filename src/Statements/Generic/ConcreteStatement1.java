@@ -1,8 +1,8 @@
 package Statements.Generic;
 
-import java.time.LocalTime;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
@@ -12,41 +12,43 @@ import java.util.TreeMap;
  *
  * @author Morai
  */
-public class ConcatStringStatement implements Statement {
+public class ConcreteStatement1 implements Statement {
 
     private BaseStatement base;
 
-    public ConcatStringStatement() {
-        base = new BaseStatement("Juntar Strings", generateOutputs(), generateInputs());
+    public ConcreteStatement1() {
+        base = new BaseStatement("ConcreteStatement1", generateOutputs(), generateInputs());
     }
 
     private SortedMap<String, Output> generateOutputs() {
 
-        Output<String> constantValue1 = new BaseOutput<String>("Juntar", String.class) {
+        Output<Collection> constantValue1 = new BaseOutput<Collection>("Const1", Collection.class) {
 
             @Override
-            public ExecutingOutput<String> getExecutionInstance() {
-
-                return () -> {
-
-                    String a = (String) base.mapInputs().get("A").getExecutingInput().getOutput().getValue();
-                    String b = (String) base.mapInputs().get("B").getExecutingInput().getOutput().getValue();
-                    return a + b;
-
+            public ExecutingOutput<Collection> getExecutionInstance() {
+                return ()-> {
+                    Collection a = (Collection) base.mapInputs().get("A").getExecutingInput().getOutput().getValue();
+                    Collection b = (Collection) base.mapInputs().get("B").getExecutingInput().getOutput().getValue();
+                    
+                    Collection c = new LinkedList();
+                    c.addAll(a);
+                    c.addAll(b);
+                    
+                    return c;
                 };
             }
 
         };
-
+        
+       
         SortedMap<String, Output> mapOutputs = new TreeMap();
         mapOutputs.put(constantValue1.getName(), constantValue1);
-
         return mapOutputs;
     }
 
     private SortedMap<String, Input> generateInputs() {
 
-        Input input1 = new BaseInput("A", String.class) {
+        Input input1 = new BaseInput("A", Collection.class){
 
             @Override
             public ExecutingInput getExecutingInput() {
@@ -56,8 +58,8 @@ public class ConcatStringStatement implements Statement {
             }
 
         };
-
-        Input input2 = new BaseInput("B", String.class) {
+       
+        Input input2 =  new BaseInput("B", Collection.class){
 
             @Override
             public ExecutingInput getExecutingInput() {
@@ -67,12 +69,13 @@ public class ConcatStringStatement implements Statement {
             }
 
         };
-
+       
         SortedMap<String, Input> mapInputs = new TreeMap();
         mapInputs.put(input1.getName(), input1);
         mapInputs.put(input2.getName(), input2);
 
         return mapInputs;
+
     }
 
     @Override
@@ -94,7 +97,7 @@ public class ConcatStringStatement implements Statement {
     @Override
     public ExecutingStatement getExecutingInstance() {
         return () -> {
-
+            
         };
     }
 

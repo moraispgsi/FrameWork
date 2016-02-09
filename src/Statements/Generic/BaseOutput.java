@@ -3,32 +3,31 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Statements;
+package Statements.Generic;
 
 /**
  *
- * @author Morais
+ * @author Morai
  */
-public class ParamStatement implements FieldReference{
-    
-    private final Class<?> type;
+public abstract class BaseOutput<T> implements Output<T> {
+
     private final String name;
-    
-    public ParamStatement(Class<?> type, String name) {
-        this.type = type;
+    private final Class<T> type;
+
+    public BaseOutput(String name, Class<T> type) {
         this.name = name;
+        this.type = type;
     }
     
-  
+    
     @Override
     public String getName() {
         return name;
     }
 
     @Override
-    public Class<?> getType() {
+    public Class<T> getType() {
         return type;
     }
-    
     
 }

@@ -31,12 +31,12 @@ public class SocketSet implements Pluggable{
     }
     
     @Override
-    public ObservableSet<InvokeInput> getCallInputs() {
+    public ObservableSet<InvokeInput> getInvokelInputs() {
         return inputCallSockets;
     }
 
     @Override
-    public ObservableSet<InvokeOutput> getCallOutputs() {
+    public ObservableSet<InvokeOutput> getInvokeOutputs() {
         return outputCallSockets;
     }
     

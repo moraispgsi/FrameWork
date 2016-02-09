@@ -6,10 +6,18 @@
 package Main;
 
 import EventDataManager.EventDataManager;
+import Statements.Generic.FileOpenStatement;
+import Statements.Generic.OutputNotAvailableException;
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -21,20 +29,11 @@ import javafx.stage.Stage;
  * 
  * @author testing
  */
-public class Test  extends Application {
+public class Test  {//extends Application {
     
-   
+   /*
     @Override
     public void start(Stage primaryStage) {
-        
-        
-        
-        
-        
-        
-        
-        
-        
         
         
         File file = new File("C:\\Users\\Morai\\Desktop\\Project");
@@ -52,8 +51,19 @@ public class Test  extends Application {
      * Main
      * @param args args
      */
+    
     public static void main(String[] args) {
-        launch(args);
+        String nome = "C:\\Users\\Morai\\Desktop\\Teste.txt";
+        Path file = FileSystems.getDefault().getPath(nome);
+        try (InputStream in = Files.newInputStream(file)) {
+            
+            Scanner sc = new Scanner(in);
+            
+            System.out.println(sc.next());
+            
+        } catch (IOException x) {
+            System.err.println(x);
+        }
         
         
     }

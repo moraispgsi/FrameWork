@@ -5,9 +5,10 @@
  */
 package CodeUIConnector.InvokeSockets.Controller;
 
-import CodeUIConnector.CallSockets.UI.UICallSocket;
+import CodeUIConnector.InvokeSockets.UI.UIInvokeSocket;
 import CodeUIConnector.SocketPane.UISocket;
-import Statements.Statement;
+import Statements.Generic.Statement;
+
 
 /**
  * Represents a logical call input socket. 
@@ -25,7 +26,18 @@ public class InvokeInput {
      * @param statement statement
      */
     public InvokeInput(Statement statement) {
-        this.uiSocket = new UICallSocket(UICallSocket.Type.INPUT,5,"Executar");
+        this.uiSocket = new UIInvokeSocket(UIInvokeSocket.Type.INPUT,5,"Executar");
+        this.statement = statement;
+    }
+    
+    /**
+     * Constructor
+     * Builds the UISocket
+     * @param statement statement
+     * @param name name of the invoke
+     */
+    public InvokeInput(Statement statement,String name) {
+        this.uiSocket = new UIInvokeSocket(UIInvokeSocket.Type.INPUT,5,name);
         this.statement = statement;
     }
     /**

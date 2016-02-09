@@ -1,38 +1,40 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package Statements.Generic;
 
-import java.time.LocalTime;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Morai
  */
-public class ConcatStringStatement implements Statement {
+public class EndOutputStatement implements Statement {
 
     private BaseStatement base;
 
-    public ConcatStringStatement() {
-        base = new BaseStatement("Juntar Strings", generateOutputs(), generateInputs());
+    public EndOutputStatement() {
+        base = new BaseStatement("Fim de linha", generateOutputs(), generateInputs());
     }
 
     private SortedMap<String, Output> generateOutputs() {
 
-        Output<String> constantValue1 = new BaseOutput<String>("Juntar", String.class) {
+        Output<EndOutput> constantValue1 = new BaseOutput<EndOutput>("EndOutput", EndOutput.class) {
 
             @Override
-            public ExecutingOutput<String> getExecutionInstance() {
-
+            public ExecutingOutput<EndOutput> getExecutionInstance() {
+                
                 return () -> {
-
-                    String a = (String) base.mapInputs().get("A").getExecutingInput().getOutput().getValue();
-                    String b = (String) base.mapInputs().get("B").getExecutingInput().getOutput().getValue();
-                    return a + b;
-
+                    
+                    base.mapInputs().get("A").getExecutingInput().getOutput().getValue();
+                    return null;
+                    
                 };
             }
 
@@ -46,7 +48,7 @@ public class ConcatStringStatement implements Statement {
 
     private SortedMap<String, Input> generateInputs() {
 
-        Input input1 = new BaseInput("A", String.class) {
+        Input input1 = new BaseInput("A", Object.class) {
 
             @Override
             public ExecutingInput getExecutingInput() {
@@ -57,20 +59,9 @@ public class ConcatStringStatement implements Statement {
 
         };
 
-        Input input2 = new BaseInput("B", String.class) {
-
-            @Override
-            public ExecutingInput getExecutingInput() {
-                return () -> {
-                    return this.getOutput().getExecutionInstance();
-                };
-            }
-
-        };
-
+        
         SortedMap<String, Input> mapInputs = new TreeMap();
         mapInputs.put(input1.getName(), input1);
-        mapInputs.put(input2.getName(), input2);
 
         return mapInputs;
     }

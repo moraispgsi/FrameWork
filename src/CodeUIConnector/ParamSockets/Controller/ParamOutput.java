@@ -5,40 +5,21 @@
  */
 package CodeUIConnector.ParamSockets.Controller;
 
-import CodeUIConnector.ParamSockets.UI.UIParamSocket;
 import CodeUIConnector.SocketPane.UISocket;
-import Statements.FieldReference;
+import Statements.Generic.Output;
 
+/**
+ *
+ * @author Morai
+ */
+public interface ParamOutput {
 
-public class ParamOutput {
+    String getName();
 
-    private final Class<?> variableType;
-    private final String name;
-    private final UISocket uiSocket;
-    private final FieldReference fieldReference;
+    Output getOutput();
 
-    public ParamOutput(Class<?> variableType, String name,FieldReference fieldReference) {
-        this.variableType = variableType;
-        this.name = name;
-        this.uiSocket = new UIParamSocket(UIParamSocket.Type.OUTPUT,5,name+" : "+variableType.getSimpleName());
-        this.fieldReference = fieldReference;
-    }
-    
-    public Class<?> getVariableType() {
-        return variableType;
-    }
+    UISocket getUISocket();
 
-    public String getName() {
-        return name;
-    }
-
-    public UISocket getUISocket() {
-        return uiSocket;
-    }
-
-    public FieldReference getFieldReference() {
-        return fieldReference;
-    }
-    
+    Class<?> getVariableType();
     
 }

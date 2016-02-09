@@ -3,16 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Statements;
+package Statements.Generic;
 
 /**
  *
  * @author Morai
  */
-public interface Statement {
-    
-    public boolean missingDependency();
-    
-    public String generateJavaCode();
+public class EndOutput {
     
 }

@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package CodeUIConnector.SocketPane;
 
 import CodeUIConnector.DraggableTitle;
@@ -13,6 +9,7 @@ import CodeUIConnector.InvokeSockets.Controller.InvokeOutput;
 import CodeUIConnector.ParamSockets.Controller.ParamInput;
 import CodeUIConnector.ParamSockets.Controller.ParamOutput;
 import javafx.collections.ObservableSet;
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.layout.BorderPane;
@@ -43,9 +40,10 @@ public class UIStatement extends Region implements Pluggable {
         titleBar.setStyle("-fx-padding: 5;-fx-background-color: rgba(144, 195, 212, .7);");
         centerVBox.setStyle(" -fx-background-color: rgba(255, 255, 255, .7);");
         
+        centerVBox.setPadding(new Insets(5, 10, 5, 10));
+        
         rootBorderPane.setTop(titleBar);
         rootBorderPane.setCenter(centerVBox);
-        
         
         callOutputVBox.setAlignment(Pos.CENTER_RIGHT);
         paramOutputVBox.setAlignment(Pos.CENTER_RIGHT);
@@ -99,27 +97,27 @@ public class UIStatement extends Region implements Pluggable {
         
         removeCallInput(socket);
         callInputVBox.getChildren().add((Node)socket.getUISocket());
-        getCallInputs().add(socket);
+        getInvokelInputs().add(socket);
 
     }
     
     public void removeCallInput(InvokeInput socket){
 
         callInputVBox.getChildren().remove(socket.getUISocket());
-        getCallInputs().remove(socket);
+        getInvokelInputs().remove(socket);
     }
     
     public void addInvokeOutput(InvokeOutput socket){
         
         removeCallOutput(socket);
         callOutputVBox.getChildren().add(socket.getUISocket());
-        getCallOutputs().add(socket);
+        getInvokeOutputs().add(socket);
 
     }
     public void removeCallOutput(InvokeOutput socket){
 
         callOutputVBox.getChildren().remove(socket.getUISocket());
-        getCallOutputs().remove(socket);
+        getInvokeOutputs().remove(socket);
 
     }
     
@@ -135,14 +133,14 @@ public class UIStatement extends Region implements Pluggable {
     }
     
     @Override
-    public ObservableSet<InvokeInput> getCallInputs() {
-        return socketSet.getCallInputs();
+    public ObservableSet<InvokeInput> getInvokelInputs() {
+        return socketSet.getInvokelInputs();
     }
 
     @Override
-    public ObservableSet<InvokeOutput> getCallOutputs() {
-        return socketSet.getCallOutputs();
+    public ObservableSet<InvokeOutput> getInvokeOutputs() {
+        return socketSet.getInvokeOutputs();
     }
     
-
+    
 }

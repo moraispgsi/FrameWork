@@ -1,63 +1,59 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
 package Statements.Generic;
 
-import java.time.LocalTime;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
  * @author Morai
  */
-public class ConcatStringStatement implements Statement {
+public class RunnableStatement implements Statement {
 
     private BaseStatement base;
+    private final String runnableInput = "EndOutput";
 
-    public ConcatStringStatement() {
-        base = new BaseStatement("Juntar Strings", generateOutputs(), generateInputs());
+    public RunnableStatement() {
+        base = new BaseStatement("Novo runnable", generateOutputs(), generateInputs());
     }
 
     private SortedMap<String, Output> generateOutputs() {
 
-        Output<String> constantValue1 = new BaseOutput<String>("Juntar", String.class) {
+        Output<Runnable> constantValue1 = new BaseOutput<Runnable>(runnableInput, Runnable.class) {
 
             @Override
-            public ExecutingOutput<String> getExecutionInstance() {
+            public ExecutingOutput<Runnable> getExecutionInstance() {
 
-                return () -> {
-
-                    String a = (String) base.mapInputs().get("A").getExecutingInput().getOutput().getValue();
-                    String b = (String) base.mapInputs().get("B").getExecutingInput().getOutput().getValue();
-                    return a + b;
-
+                Runnable runnable = () -> {
+                    try {
+                        base.mapInputs().get(runnableInput).getExecutingInput().getOutput().getValue();
+                    } catch (OutputNotAvailableException ex) {
+                        Logger.getLogger(RunnableStatement.class.getName()).log(Level.SEVERE, null, ex);
+                    }
                 };
+                return () -> {
+                    return runnable;
+                };
+
             }
 
         };
 
         SortedMap<String, Output> mapOutputs = new TreeMap();
         mapOutputs.put(constantValue1.getName(), constantValue1);
-
         return mapOutputs;
     }
 
     private SortedMap<String, Input> generateInputs() {
 
-        Input input1 = new BaseInput("A", String.class) {
-
-            @Override
-            public ExecutingInput getExecutingInput() {
-                return () -> {
-                    return this.getOutput().getExecutionInstance();
-                };
-            }
-
-        };
-
-        Input input2 = new BaseInput("B", String.class) {
+        Input input1 = new BaseInput(runnableInput, EndOutput.class) {
 
             @Override
             public ExecutingInput getExecutingInput() {
@@ -70,9 +66,9 @@ public class ConcatStringStatement implements Statement {
 
         SortedMap<String, Input> mapInputs = new TreeMap();
         mapInputs.put(input1.getName(), input1);
-        mapInputs.put(input2.getName(), input2);
 
         return mapInputs;
+
     }
 
     @Override

@@ -1,8 +1,4 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
+
 package CodeUIConnector;
 
 import CodeUIConnector.ParamSockets.Controller.ParamOutput;
@@ -13,13 +9,12 @@ import CodeUIConnector.SocketSets.UISocketFlowBoardSet;
 import CodeUIConnector.InvokeSockets.Controller.InvokeOutput;
 import CodeUIConnector.SocketPane.UISocket;
 import CodeUIConnector.SocketPane.UIStatement;
-import DynamicClassUtils.DynamicClassUtils;
-
+import Serialization.BackupMemento;
+import engine.exceptions.PontoDeRestauroInexistenteException;
+import engine.interfaces.Recuperavel;
+import engine.interfaces.Restauravel;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
@@ -33,17 +28,14 @@ import javafx.scene.layout.Region;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.StrokeLineCap;
 
-public class UIMethodFlowBoard extends Region {
-
-    private final List<Class> loadedClasses;
-
+public class UIFlowBoard extends Region implements Recuperavel,Restauravel{
+ 
+    private BackupMemento backup;
+    
     private final UISocketFlowBoardSet socketSet = new UISocketFlowBoardSet();
 
     private final Map<ParamInput, HorizontalCurvedLine> lineVariableMap = new HashMap<>();
     private final Map<InvokeOutput, HorizontalCurvedLine> lineCallMap = new HashMap<>();
-
-    private final String filePath;
-    private final Method method;
 
     private InvokeOutput draggingCallOutput;
     private ParamOutput draggingParamOutput;
@@ -54,19 +46,10 @@ public class UIMethodFlowBoard extends Region {
     private final DoubleProperty mouseX = new SimpleDoubleProperty();
     private final DoubleProperty mouseY = new SimpleDoubleProperty();
 
-    public UIMethodFlowBoard(String filePath, Method method) {
-
-        try {
-            loadedClasses = DynamicClassUtils.getLoadedClasses(this.getClass().getClassLoader());
-            Collections.sort(loadedClasses, (Class class1, Class class2) -> class1.getSimpleName().compareTo(class2.getSimpleName()));
-
-        } catch (NoSuchFieldException | IllegalArgumentException | IllegalAccessException ex) {
-            throw new RuntimeException("Unable to get loaded classes.");
-        }
-
-        this.filePath = filePath;
-        this.method = method;
-
+    public UIFlowBoard() {
+        
+        backup = new BackupMemento(this);
+        
         this.setCursor(Cursor.OPEN_HAND);
 
         setOnMouseDragOver(e -> {
@@ -110,8 +93,6 @@ public class UIMethodFlowBoard extends Region {
         getChildren().addListener((ListChangeListener.Change<? extends Node> change) -> {
             childrenChangeListener(change);
         });
-
-
 
     }
 
@@ -623,12 +604,19 @@ public class UIMethodFlowBoard extends Region {
 
     }
 
-    public Method getMethod() {
-        return method;
+    @Override
+    public void restaurarEstado(Restauravel restauravel) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
-    public List<Class> getLoadedClasses() {
-        return new ArrayList<>(loadedClasses);
+    @Override
+    public void restaurarPontoAnterior() throws PontoDeRestauroInexistenteException {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+
+    @Override
+    public void criarPontoDeRestauro() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

@@ -3,14 +3,14 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Statements;
+package Statements.Generic;
 
 /**
  *
  * @author Morai
  */
-public interface ReturningStatement extends Statement {
+public interface ExecutingOutput<T> {
     
-    public Class<?> getReturnType();
+    public T getValue() throws OutputNotAvailableException;
     
 }

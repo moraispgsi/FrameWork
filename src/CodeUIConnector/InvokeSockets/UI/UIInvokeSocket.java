@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package CodeUIConnector.CallSockets.UI;
+package CodeUIConnector.InvokeSockets.UI;
 
 import CodeUIConnector.SocketPane.UISocket;
 import javafx.application.Platform;
@@ -22,7 +22,7 @@ import javafx.scene.shape.Rectangle;
  *  a call socket UI element
  * @author Ricardo José Horta Morais
  */
-public class UICallSocket extends UISocket {
+public class UIInvokeSocket extends UISocket {
     /**
      * Type of the socket
      */
@@ -46,7 +46,7 @@ public class UICallSocket extends UISocket {
      * @param spacing spacing beetween node elements
      * @param name name of the socket
      */
-    public UICallSocket(Type type, double spacing, String name) {
+    public UIInvokeSocket(Type type, double spacing, String name) {
 
         hBox.setSpacing(spacing);
         hBox.setAlignment(Pos.CENTER);

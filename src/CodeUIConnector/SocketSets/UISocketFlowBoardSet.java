@@ -113,13 +113,13 @@ public class UISocketFlowBoardSet implements Pluggable {
     }
 
     @Override
-    public ObservableSet<InvokeInput> getCallInputs() {
-        return socketSet.getCallInputs();
+    public ObservableSet<InvokeInput> getInvokelInputs() {
+        return socketSet.getInvokelInputs();
     }
 
     @Override
-    public ObservableSet<InvokeOutput> getCallOutputs() {
-        return socketSet.getCallOutputs();
+    public ObservableSet<InvokeOutput> getInvokeOutputs() {
+        return socketSet.getInvokeOutputs();
     }
 
 }

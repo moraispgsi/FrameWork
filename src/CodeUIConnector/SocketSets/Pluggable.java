@@ -17,8 +17,8 @@ public interface Pluggable {
 
     public ObservableSet<ParamOutput> getOutputParams();
     
-    public ObservableSet<InvokeInput> getCallInputs();
+    public ObservableSet<InvokeInput> getInvokelInputs();
     
-    public ObservableSet<InvokeOutput> getCallOutputs();
+    public ObservableSet<InvokeOutput> getInvokeOutputs();
     
 }

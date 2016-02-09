@@ -5,99 +5,31 @@
  */
 package CodeUIConnector.ParamSockets.Controller;
 
-import CodeUIConnector.ParamSockets.UI.UIParamSocket;
 import CodeUIConnector.SocketPane.UISocket;
-import DynamicClassUtils.DynamicClassUtils;
+import Statements.Generic.Input;
 
 /**
- * Represents a param input
- * @author Ricardo José Horta Morais
+ *
+ * @author Morai
  */
-public class ParamInput {
+public interface ParamInput {
 
-    private final Class<?> variableType;
-    private final UISocket uiSocket;
+    void connect(ParamOutput output);
 
-    private ParamOutput outputSource;
+    void disconnect();
 
-    private ParamSocketHandler onConnect;
-    private ParamSocketHandler onDisconnect;
+    Input getInput();
 
-    public ParamInput(Class<?> variableType, String name) {
+    ParamOutput getOutputSource();
 
-        this.variableType = variableType;
-        this.uiSocket = new UIParamSocket(UIParamSocket.Type.INPUT, 5, name+" : "+variableType.getSimpleName());
+    UISocket getUISocket();
 
-    }
+    Class<?> getVariableType();
 
-    public void setOnConnect(ParamSocketHandler onConnect) {
+    boolean isCastCompatible(ParamOutput paramOutput);
 
-        this.onConnect = onConnect;
+    void setOnConnect(ParamSocketHandler onConnect);
 
-    }
-
-    public void setOnDisconnect(ParamSocketHandler onDisconnect) {
-        this.onDisconnect = onDisconnect;
-    }
+    void setOnDisconnect(ParamSocketHandler onDisconnect);
     
-    
-
-    public Class<?> getVariableType() {
-        return variableType;
-    }
-
-    public UISocket getUISocket() {
-        return uiSocket;
-    }
-
-    public ParamOutput getOutputSource() {
-        return outputSource;
-    }
-
-    public void connect(ParamOutput output) {
-
-        if (output == null) {
-            return;
-        }
-        
-        disconnect();
-
-        this.outputSource = output;
-
-        uiSocket.showConnected();
-        output.getUISocket().showConnected();
-
-        if (onConnect != null) {
-            onConnect.handle(this, output);
-        }
-
-    }
-    
-    public void disconnect(){
-        
-        if(outputSource == null)
-            return;
-            
-        if(onDisconnect != null)
-            onDisconnect.handle(this, outputSource);
-         
-        this.outputSource = null;
-        
-    }
-    
-
-    public boolean isCastCompatible(ParamOutput paramOutput) {
-
-        return DynamicClassUtils
-                .primitiveToWrapper(
-                        getVariableType()
-                )
-                .isAssignableFrom(
-                        DynamicClassUtils
-                        .primitiveToWrapper(
-                                paramOutput.getVariableType()
-                        )
-                );
-    }
-
 }

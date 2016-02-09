@@ -5,21 +5,11 @@
  */
 package EventDataManager;
 
+import CodeUIConnector.UIToolBox.ToolBox;
 import CodeUIConnector.UIMethodFlowBoard;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TreeItem;
-import javafx.scene.control.TreeView;
 import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.Pane;
-import javafx.scene.layout.Region;
-import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 import javafx.stage.StageStyle;
 
@@ -28,9 +18,9 @@ public class EventDataClassDebugger extends Stage{
     private final Class<?> className;
     
     private final BorderPane borderPane = new BorderPane();
-    private final TextArea editor = new TextArea();
-    private final TreeItem<Node> rootItem; 
-    private final TreeView treeView = new TreeView();
+    //private final TextArea editor = new TextArea();
+    //private final TreeItem<Node> rootItem; 
+    //private final TreeView treeView = new TreeView();
     
     private Object object;
     
@@ -39,16 +29,20 @@ public class EventDataClassDebugger extends Stage{
         super(StageStyle.UTILITY);
         setTitle("EventData class debugger");
         
+        borderPane.setPrefSize(1024, 600);
+        
         this.className = className;
 
-        Label rootLabel = new Label(className.getName());
-        rootItem = new TreeItem<>(rootLabel);
-        treeView.setRoot(rootItem);
-        
-        buildTreeView();
         
         
-        //borderPane.setLeft(treeView);
+        UIMethodFlowBoard flowBoard = new UIMethodFlowBoard("",className.getMethods()[0]);
+        ToolBox toolBox = new ToolBox(flowBoard);
+        //toolBox.setPrefWidth(200);
+        borderPane.setCenter(flowBoard);
+        
+        
+        borderPane.setLeft(toolBox);
+
         
         Scene scene = new Scene(borderPane);
         
@@ -57,7 +51,7 @@ public class EventDataClassDebugger extends Stage{
         show();
         
     }
-    
+    /*
     private void buildTreeView(){
         
         Pane pane = new Pane();
@@ -92,7 +86,7 @@ public class EventDataClassDebugger extends Stage{
 
         }
         
-    }
+    }*/
     
 
 }

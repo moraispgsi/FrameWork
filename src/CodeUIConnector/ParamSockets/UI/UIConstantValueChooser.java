@@ -5,21 +5,27 @@
  */
 package CodeUIConnector.ParamSockets.UI;
 
-
 import CodeUIConnector.SocketPane.UISocket;
+import java.util.Collection;
 import javafx.application.Platform;
 import javafx.beans.property.ObjectProperty;
+import javafx.beans.property.SimpleDoubleProperty;
+import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.geometry.Bounds;
 import javafx.geometry.NodeOrientation;
 import javafx.geometry.Pos;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-
-public class UIParamSocket  extends UISocket {
+/**
+ *
+ * @author Morai
+ */
+public class UIConstantValueChooser extends UISocket {
 
     public static enum Type {
 
@@ -33,19 +39,22 @@ public class UIParamSocket  extends UISocket {
     private ObjectProperty<Bounds> plugSceneBounds = new SimpleObjectProperty<>();
     private final HBox hBox = new HBox();
     private final Rectangle plug = new Rectangle();
-    private final Label nameLabel = new Label();
+    private final ComboBox valueBox = new ComboBox();
 
-    public UIParamSocket(Type type, double spacing, String name) {
+    public UIConstantValueChooser(Type type, double spacing, Collection values) {
+
+        valueBox.getItems().addAll(values);
+        valueBox.getSelectionModel().selectFirst();
+        valueBox.setStyle("-fx-font-size : 7pt;");
 
         hBox.setSpacing(spacing);
         hBox.setAlignment(Pos.CENTER);
-
-        nameLabel.setText(name);
+        
 
         plug.setWidth(4);
         plug.setHeight(20);
         plug.setFill(COLOR_IDLE);
-        hBox.getChildren().addAll(plug, nameLabel);
+        hBox.getChildren().addAll(plug, valueBox);
         if (type == Type.OUTPUT) {
             setNodeOrientation(NodeOrientation.RIGHT_TO_LEFT);
         }
@@ -88,5 +97,11 @@ public class UIParamSocket  extends UISocket {
 
         super.showIdle();
     }
+
+    public ComboBox getValueBox() {
+        return valueBox;
+    }
+    
+    
 
 }

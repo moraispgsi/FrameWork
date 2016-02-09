@@ -5,7 +5,7 @@
  */
 package CodeUIConnector.InvokeSockets.Controller;
 
-import CodeUIConnector.CallSockets.UI.UICallSocket;
+import CodeUIConnector.InvokeSockets.UI.UIInvokeSocket;
 import CodeUIConnector.SocketPane.UISocket;
 
 /**
@@ -27,12 +27,12 @@ public class InvokeOutput {
      */
     public InvokeOutput(String name) {
 
-        this.uiSocket = new UICallSocket(UICallSocket.Type.OUTPUT, 5, name);
+        this.uiSocket = new UIInvokeSocket(UIInvokeSocket.Type.OUTPUT, 5, name);
 
     }
 
     /**
-     * Connects to an CallInput.
+     * Connects to a CallInput.
      *
      * @param callInput call input that will be executed after this call output
      */
