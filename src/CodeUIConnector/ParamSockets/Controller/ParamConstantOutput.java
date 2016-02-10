@@ -7,8 +7,8 @@ package CodeUIConnector.ParamSockets.Controller;
 
 import CodeUIConnector.ParamSockets.UI.UIConstantValueChooser;
 import CodeUIConnector.SocketPane.UISocket;
-import Statements.Generic.ExecutingOutput;
-import Statements.Generic.Output;
+import Statements.ExecutingOutput;
+import Statements.Output;
 import java.util.Arrays;
 import java.util.Set;
 

@@ -8,7 +8,7 @@ package Statements.GenericUI;
 import CodeUIConnector.ParamSockets.Controller.ParamConstantOutput;
 import CodeUIConnector.ParamSockets.Controller.ParamOutput;
 import CodeUIConnector.SocketPane.UIStatement;
-import Statements.Generic.SimpleCalculatorStatement;
+import Statements.Generic.GeneralPurpose.SimpleCalculatorStatement;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;

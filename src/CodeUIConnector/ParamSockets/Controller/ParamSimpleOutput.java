@@ -7,7 +7,7 @@ package CodeUIConnector.ParamSockets.Controller;
 
 import CodeUIConnector.ParamSockets.UI.UIParamSocket;
 import CodeUIConnector.SocketPane.UISocket;
-import Statements.Generic.Output;
+import Statements.Output;
 
 
 public class ParamSimpleOutput implements ParamOutput {

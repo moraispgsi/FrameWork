@@ -6,8 +6,8 @@
 package Main;
 
 import EventDataManager.EventDataManager;
-import Statements.Generic.FileOpenStatement;
-import Statements.Generic.OutputNotAvailableException;
+import Statements.Generic.GeneralPurpose.FileOpenStatement;
+import Statements.OutputNotAvailableException;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;

@@ -8,7 +8,7 @@ package CodeUIConnector.ParamSockets.Controller;
 import CodeUIConnector.ParamSockets.UI.UIParamSocket;
 import CodeUIConnector.SocketPane.UISocket;
 import DynamicClassUtils.DynamicClassUtils;
-import Statements.Generic.Input;
+import Statements.Input;
 
 /**
  * Represents a param input

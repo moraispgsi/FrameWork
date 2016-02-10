@@ -7,7 +7,7 @@ package CodeUIConnector.InvokeSockets.Controller;
 
 import CodeUIConnector.InvokeSockets.UI.UIInvokeSocket;
 import CodeUIConnector.SocketPane.UISocket;
-import Statements.Generic.Statement;
+import Statements.Statement;
 
 
 /**

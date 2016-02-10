@@ -12,11 +12,11 @@ import CodeUIConnector.ParamSockets.Controller.ParamOutput;
 import CodeUIConnector.ParamSockets.Controller.ParamSimpleInput;
 import CodeUIConnector.ParamSockets.Controller.ParamSimpleOutput;
 import CodeUIConnector.SocketPane.UIStatement;
-import Statements.Generic.EndOutput;
-import Statements.Generic.Input;
-import Statements.Generic.Output;
-import Statements.Generic.OutputNotAvailableException;
-import Statements.Generic.Statement;
+import Statements.EndOutput;
+import Statements.Input;
+import Statements.Output;
+import Statements.OutputNotAvailableException;
+import Statements.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

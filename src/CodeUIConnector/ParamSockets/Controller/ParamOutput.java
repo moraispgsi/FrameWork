@@ -6,7 +6,7 @@
 package CodeUIConnector.ParamSockets.Controller;
 
 import CodeUIConnector.SocketPane.UISocket;
-import Statements.Generic.Output;
+import Statements.Output;
 
 /**
  *
