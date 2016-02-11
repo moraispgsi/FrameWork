@@ -34,7 +34,7 @@ public class ParamConstantOutput<T> implements ParamOutput {
             }
 
             @Override
-            public Class getType() {
+            public Class getClassType() {
                 return type;
             }
 
@@ -61,7 +61,7 @@ public class ParamConstantOutput<T> implements ParamOutput {
 
     @Override
     public Class<?> getVariableType() {
-        return output.getType();
+        return output.getClassType();
     }
 
     @Override

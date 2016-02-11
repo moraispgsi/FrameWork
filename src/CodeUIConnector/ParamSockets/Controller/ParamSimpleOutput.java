@@ -19,7 +19,7 @@ public class ParamSimpleOutput implements ParamOutput {
     public ParamSimpleOutput(Output output) {
         
         this.output = output;
-        this.uiSocket = new UIParamSocket(UIParamSocket.Type.OUTPUT,5,output.getName()+" : "+output.getType().getSimpleName());
+        this.uiSocket = new UIParamSocket(UIParamSocket.Type.OUTPUT,5,output.getName()+" : "+output.getClassType().getSimpleName());
 
     }
 
@@ -30,7 +30,7 @@ public class ParamSimpleOutput implements ParamOutput {
 
     @Override
     public Class<?> getVariableType() {
-        return output.getType();
+        return output.getClassType();
     }
 
     @Override

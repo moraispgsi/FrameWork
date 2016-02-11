@@ -26,7 +26,7 @@ public abstract class BaseOutput<T> implements Output<T> {
     }
 
     @Override
-    public Class<T> getType() {
+    public Class<T> getClassType() {
         return type;
     }
     

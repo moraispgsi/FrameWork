@@ -22,7 +22,9 @@ public class JavaFXStatementsFactory extends StatementFactory {
             CreateTextPaneStatement.class,
             NewSceneStatement.class,
             NewStageStatement.class,
-            OpenStageWindowStatement.class)
+            OpenStageWindowStatement.class,
+            NewXYChartStatement.class
+            )
         );
 
     }

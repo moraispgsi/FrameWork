@@ -18,6 +18,7 @@ public class GeneralPurposeStatementsFactory extends StatementFactory {
     public GeneralPurposeStatementsFactory() {
         
         super(Arrays.asList(
+                
             ConcatStringStatement.class,
             ConsolePrintStatement.class,
             FileOpenStatement.class,
@@ -26,7 +27,10 @@ public class GeneralPurposeStatementsFactory extends StatementFactory {
             NewThreadStatement.class,
             RunnableStatement.class,
             SimpleCalculatorStatement.class,
-            NewStageStatement.class));
+            NewStageStatement.class,
+            EndOutputStatement.class
+            
+        ));
 
     }
 

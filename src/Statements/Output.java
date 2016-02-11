@@ -11,10 +11,10 @@ package Statements;
  * @param <T>
  */
 public interface Output<T> {
-    
+
     public String getName();
 
-    public Class<T> getType();
+    public Class<T> getClassType();
     
     public ExecutingOutput<T> getExecutionInstance();
 

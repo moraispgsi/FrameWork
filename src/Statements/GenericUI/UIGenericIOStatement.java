@@ -48,7 +48,7 @@ public class UIGenericIOStatement extends UIStatement {
                 
                 
                 try {
-                    if(output.getType() == EndOutput.class)
+                    if(output.getClassType() == EndOutput.class)
                         output.getExecutionInstance().getValue();
                     else
                         System.out.println(output.getExecutionInstance().getValue());
