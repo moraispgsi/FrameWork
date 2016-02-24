@@ -5,20 +5,23 @@
  */
 package DynamicClassUtils;
 
-
 import Main.Test;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.jar.JarEntry;
+import java.util.jar.JarFile;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.tools.JavaCompiler;
@@ -26,13 +29,10 @@ import javax.tools.ToolProvider;
 
 /**
  * Utility class that allow usage of reflexion
- * 
+ *
  * @author Ricardo José Horta Morais
  */
 public class DynamicClassUtils {
-    
-    
-    
 
     private static final Map<Class<?>, Class<?>> PRIMITIVES_TO_WRAPPERS = new HashMap<>();
     private static final Map<Class<?>, Class<?>> WRAPPERS_TO_PRIMITIVES = new HashMap<>();
@@ -59,24 +59,23 @@ public class DynamicClassUtils {
         WRAPPERS_TO_PRIMITIVES.put(Short.class, short.class);
         WRAPPERS_TO_PRIMITIVES.put(Void.class, void.class);
 
-    }     
-    
-    
+    }
+
     // safe because both Long.class and long.class are of type Class<Long>
     @SuppressWarnings("unchecked")
     public static <T> Class<T> primitiveToWrapper(Class<T> c) {
-      return c.isPrimitive() ? (Class<T>) PRIMITIVES_TO_WRAPPERS.get(c) : c;
+        return c.isPrimitive() ? (Class<T>) PRIMITIVES_TO_WRAPPERS.get(c) : c;
     }
-    
+
     // safe because both Long.class and long.class are of type Class<Long>
     @SuppressWarnings("unchecked")
     public static <T> Class<T> wrapperToPrimitive(Class<T> c) {
-      return c.isPrimitive() ?   c: (Class<T>)WRAPPERS_TO_PRIMITIVES.get(c);
+        return c.isPrimitive() ? c : (Class<T>) WRAPPERS_TO_PRIMITIVES.get(c);
     }
-    
-    
+
     /**
      * Compiles a source file and return a class file
+     *
      * @param sourceFile source file to compile
      * @return class file generated
      */
@@ -87,8 +86,8 @@ public class DynamicClassUtils {
         }
 
         JavaCompiler compiler = ToolProvider.getSystemJavaCompiler();
-        
-        if (compiler.run(null, null, null, sourceFile.getPath(),"-parameters") != 0) {
+
+        if (compiler.run(null, null, null, sourceFile.getPath(), "-parameters") != 0) {
             throw new RuntimeException("Error compiling.");
         }
 
@@ -107,36 +106,68 @@ public class DynamicClassUtils {
         return classFile;
 
     }
-    
+
     /**
      * Loads a class file to the default classLoader and returns its class
+     *
      * @param file class file
      * @return Class extracted from the file
      * @throws MalformedURLException
      * @throws ClassNotFoundException
      * @throws InstantiationException
      * @throws IllegalAccessException
-     * @throws IOException 
+     * @throws IOException
      */
     public static Class<?> loadClassFile(File file) throws MalformedURLException, ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
 
         String fileName = "";
 
         int i = file.getName().lastIndexOf('.');
-        
+
         if (i > 0) {
             fileName = file.getName().substring(0, i);
         }
-        
 
         // Load and instantiate compiled class.
         URLClassLoader classLoader = URLClassLoader.newInstance(new URL[]{file.getParentFile().getParentFile().toURI().toURL()});
         Class<?> cls = Class.forName(file.getParentFile().getName() + "." + fileName, true, classLoader);
         return cls;
     }
-    
-    public static List<Class> getLoadedClasses(ClassLoader classLoader) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException{
-        
+
+    public static JarClassLoader loadJarClasses(String pathToJar, ClassLoader loader) throws IOException, ClassNotFoundException {
+
+        JarFile jarFile;
+
+        jarFile = new JarFile(pathToJar);
+
+        Enumeration enumeration = jarFile.entries();
+
+        JarClassLoader cl = new JarClassLoader(new URL("jar:file:" + pathToJar + "!/"), loader);
+
+        while (enumeration.hasMoreElements()) {
+            JarEntry je = (JarEntry) enumeration.nextElement();
+            if (je.isDirectory() || !je.getName().endsWith(".class")) {
+                continue;
+            }
+            // -6 because of .class
+            String className = je.getName().substring(0, je.getName().length() - 6);
+            className = className.replace('/', '.');
+
+            try {
+
+                Class c = cl.loadClass(className);
+
+            } catch (ClassNotFoundException e) {
+
+            }
+        }
+
+        return cl;
+
+    }
+
+    public static List<Class> getLoadedClasses(ClassLoader classLoader) throws NoSuchFieldException, IllegalArgumentException, IllegalAccessException {
+
         Field classes;
 
         classes = ClassLoader.class.getDeclaredField("classes");
@@ -145,12 +176,9 @@ public class DynamicClassUtils {
         List<Class> classList = new ArrayList((List<Class>) classes.get(classLoader));
 
         classes.setAccessible(false);
-        
+
         return classList;
 
     }
-    
-    
-
 
 }

@@ -74,6 +74,14 @@ public class UIConstant4 extends UIStatement{
         ParamOutput paramOutput4 = new ParamConstantOutput(Class.class, values4);
         this.addOutputParam(paramOutput4);
         
+        Set<String> values5 = new HashSet();
+        values5.add("5");
+        values5.add("2"); 
+        
+        ParamOutput paramOutput5 = new ParamConstantOutput(String.class, values5);
+        this.addOutputParam(paramOutput5);
+        
+        
         
     }
     

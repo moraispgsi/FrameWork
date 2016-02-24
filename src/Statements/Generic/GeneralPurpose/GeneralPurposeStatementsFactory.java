@@ -27,8 +27,9 @@ public class GeneralPurposeStatementsFactory extends StatementFactory {
             NewThreadStatement.class,
             RunnableStatement.class,
             SimpleCalculatorStatement.class,
-            NewStageStatement.class,
-            EndOutputStatement.class
+            EndOutputStatement.class,
+            ConcatEndOutputsStatement.class,
+            StringToIntegerStatement.class
             
         ));
 
